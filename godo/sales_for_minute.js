@@ -61,15 +61,14 @@ async function getOrderData(channel, startDate, endDate, errorCount) {
                             s.deliveryDt[0],
                             s.goodsNo[0],
                             s.optionSno[0], 
-                            s.fixedPrice[0], 
-                            (s.goodsPrice[0] + s.optionPrice[0]), 
-                            s.goodsDcPrice[0], 
-                            s.goodsCnt[0], 
+                            Number(s.fixedPrice[0]), 
+                            (Number(s.goodsPrice[0]) + Number(s.optionPrice[0])), 
+                            Number(s.goodsDcPrice[0]), 
+                            Number(s.goodsCnt[0]), 
                             orderData[i].memId == undefined ? null : orderData[i].memId[0],
                             s.orderStatus[0], 
                             s.commission[0] 
                         ] );
-                        console.log(updateArray);
 
                     const insertOrderSql = `
                         INSERT INTO management.korea_orders 

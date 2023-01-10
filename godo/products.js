@@ -5,14 +5,12 @@ const util = require("../data-center/utility.js");
 const startDate = util.lib.today.minus({days: 1}).toFormat('yyyy-LL-dd');
 const endDate = util.lib.today.toFormat('yyyy-LL-dd');
 
-// const rule = new util.lib.schedule.RecurrenceRule();
-// rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
-// rule.hour = 4;
-// rule.minute = 40;
+const rule = new util.lib.schedule.RecurrenceRule();
+rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
+rule.hour = 4;
+rule.minute = 40;
 
-// util.lib.schedule.scheduleJob( "getProductData", rule, () => getCount() );
-
-getCount();
+util.lib.schedule.scheduleJob( "getProductData", rule, () => getCount() );
 
 async function getCount() {
 
@@ -66,8 +64,8 @@ async function getProduct(pageNo) {
             r.trendNo[0] == '' ? null : r.trendNo[0],
             r.originNm[0] == '' ? null : Object.keys(util.lib.originData)[ Object.values(util.lib.originData).indexOf(r.originNm[0]) ],
             r.taxFreeFl[0],
-            r.fixedPrice[0],
-            r.goodsPrice[0],
+            Number(r.fixedPrice[0]),
+            Number(r.goodsPrice[0]),
             r.cafe24ProductCode[0] == '' ? null : r.cafe24ProductCode[0],
         ];
   
@@ -115,7 +113,7 @@ async function getProduct(pageNo) {
                     s.optionValue3[0],
                     s.optionValue4[0],
                     r.goodsNo[0],
-                    s.optionPrice[0],
+                    Number(s.optionPrice[0]),
                     s.modDt[0] == '' ? null : s.modDt[0],
                     s.cafe24OptionCode[0] == '' ? null : s.cafe24OptionCode[0],
                 ];
