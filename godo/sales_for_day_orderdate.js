@@ -1,25 +1,25 @@
 'use strict'
 
 const util = require("../data-center/utility.js");
-
 let errorCount = 0;
 
-const rule = new util.lib.schedule.RecurrenceRule();
-rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
-rule.hour = 3;
-rule.minute = 30;
+start();
 
-util.lib.schedule.scheduleJob("sales", rule, function(){
-    const targetDate = util.lib.today.minus({days: 1}).toFormat('yyyy-LL-dd');
-    const start1 = `${targetDate} 00:00:00`;
-    const end1 = `${targetDate} 11:59:59`;
-    const start2 = `${targetDate} 12:00:00`;
-    const end2 = `${targetDate} 23:59:59`;
-
-    const startDateArray = [start1, start2];
-    const endDateArray = [end1, end2];
-    setOrderChannel(targetDate, startDateArray, endDateArray);
-});
+async function start(){
+    const targetDate = ['2022-09-11','2022-09-12','2022-09-13','2022-09-14','2022-09-15','2022-09-16','2022-09-17','2022-09-18','2022-09-19','2022-09-20'];
+    for(let i = 0; i < targetDate.length; i++) {
+        const start1 = `${targetDate[i]} 00:00:00`;
+        const end1 = `${targetDate[i]} 11:59:59`;
+        const start2 = `${targetDate[i]} 12:00:00`;
+        const end2 = `${targetDate[i]} 23:59:59`;
+        
+        const startDateArray = [start1, start2];
+        const endDateArray = [end1, end2];
+        const signal = await setOrderChannel(targetDate[i], startDateArray, endDateArray);
+        await util.delayTime(2000);
+        console.log(signal);
+    }
+}
 
 async function setOrderChannel(targetDate, startDateArray, endDateArray) {
     const orderChannel = ["shop","naverpay"];
@@ -39,14 +39,14 @@ async function setOrderChannel(targetDate, startDateArray, endDateArray) {
             await util.delayTime(2000);
         }
         await util.delayTime(2000);
-        console.log (targetDate, " / ", orderChannel[i], " update complete");
+        return targetDate + " / " + orderChannel[i] + " update complete";
     }
 }
 
 async function getOrderData(channel, status, startDate, endDate) {
 
     const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
-        dateType: 'modify', 
+        dateType: 'order', 
         startDate: startDate, 
         endDate: endDate, 
         orderChannel: channel,

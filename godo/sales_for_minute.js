@@ -1,10 +1,11 @@
 'use strict'
+const { DateTime } = require("luxon");
 
 const util = require("../data-center/utility.js");
 
 setInterval( () => {
-    const startTime = util.lib.today.minus({minutes: 6}).toFormat('yyyy-LL-dd HH:mm:ss');
-    const endTime = util.lib.today.toFormat('yyyy-LL-dd HH:mm:ss');
+    const startTime = DateTime.now().minus({minutes: 6}).toFormat('yyyy-LL-dd HH:mm:ss');
+    const endTime = DateTime.now().toFormat('yyyy-LL-dd HH:mm:ss');
     let errorCount = 0;
     setOrderChannel(startTime, endTime, errorCount);
 }, 5*60*1000);

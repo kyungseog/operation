@@ -2,22 +2,17 @@
 
 const util = require("../data-center/utility.js");
 
-const startDate = util.lib.today.minus({days: 1}).toFormat('yyyy-LL-dd');
-const endDate = util.lib.today.toFormat('yyyy-LL-dd');
+const targetDate = ['2022-10-16','2022-10-17','2022-10-18','2022-10-19','2022-10-20','2022-10-21','2022-10-22','2022-10-23','2022-10-24','2022-10-25'];
+for(let i = 0; i < targetDate.length; i++) {
+    getCount(targetDate[i]);
+};
 
-const rule = new util.lib.schedule.RecurrenceRule();
-rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
-rule.hour = 4;
-rule.minute = 40;
-
-util.lib.schedule.scheduleJob( "getProductData", rule, () => getCount() );
-
-async function getCount() {
+async function getCount(targetDate) {
 
     const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
-        searchDateType: 'modDt', 
-        startDate: startDate, 
-        endDate: endDate } );
+        searchDateType: 'regDt', 
+        startDate: targetDate, 
+        endDate: targetDate } );
 
     const options = { method: 'POST',
         url: `${util.param.main_url}/goods/Goods_Search.php?${paramDetail}`
@@ -29,17 +24,17 @@ async function getCount() {
     console.log("total page count : ", pageCount);
 
     for(let i = 0; i < pageCount; i++) {
-        let data = await getProduct(i + 1);
+        let data = await getProduct(targetDate, i + 1);
         console.log(i + 1, "/", pageCount,data);
     };
 }
 
-async function getProduct(pageNo) {
+async function getProduct(targetDate, pageNo) {
 
     const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
-        searchDateType: 'modDt', 
-        startDate: startDate, 
-        endDate: endDate,
+        searchDateType: 'regDt', 
+        startDate: targetDate, 
+        endDate: targetDate,
         page: pageNo } );
 
     const options = { method: 'POST',
