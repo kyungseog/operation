@@ -10,6 +10,8 @@ const schedule = require('node-schedule');
 const qs = require('querystring');
 const { DateTime } = require("luxon");
 
+const keys = require('./apikey.json');
+
 dotenv.config({path: path.join(__dirname, '/.env')});
 const db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -32,6 +34,12 @@ const originData = {
     ID: '인도네시아', 
     IN: '인도', 
     MY: '말레이시아'
+};
+
+const sheetIds = {
+    koreaSheetId: process.env.KOREA_SHEET_ID,
+    japanSheetId: process.env.JAPAN_SHEET_ID,
+    marketingSheetId: process.env.MARKETING_SHEET_ID
 };
 
 module.exports.slackApp = new App({
@@ -76,5 +84,7 @@ module.exports.lib = {
     qs,
     DateTime,
     today,
-    originData
+    originData,
+    keys,
+    sheetIds
 }

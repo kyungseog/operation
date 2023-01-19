@@ -1,12 +1,22 @@
 'use strict'
 
 const util = require("../data-center/utility.js");
-let errorCount = 0;
 
 start();
 
 async function start(){
-    const targetDate = ['2022-09-11','2022-09-12','2022-09-13','2022-09-14','2022-09-15','2022-09-16','2022-09-17','2022-09-18','2022-09-19','2022-09-20'];
+    const targetDate = [
+        '2022-09-22',
+        '2022-09-23',
+        '2022-09-24',
+        '2022-09-25',
+        '2022-09-26',
+        '2022-09-27',
+        '2022-09-28',
+        '2022-09-29',
+        '2022-09-30'
+    ];
+
     for(let i = 0; i < targetDate.length; i++) {
         const start1 = `${targetDate[i]} 00:00:00`;
         const end1 = `${targetDate[i]} 11:59:59`;
@@ -16,29 +26,25 @@ async function start(){
         const startDateArray = [start1, start2];
         const endDateArray = [end1, end2];
         const signal = await setOrderChannel(targetDate[i], startDateArray, endDateArray);
-        await util.delayTime(2000);
+        await util.delayTime(1000);
         console.log(signal);
     }
 }
 
 async function setOrderChannel(targetDate, startDateArray, endDateArray) {
-    const orderChannel = ["shop","naverpay"];
-    const orderStatus = await util.sqlData(`
-        SELECT order_status_code 
-        FROM gododb.order_status 
-        WHERE order_status_code NOT IN ('g2','g3','g4','f1','f2','f3','z1','z2','z3','z4','z5')`
-    );
+    const orderChannel = ["shop", "naverpay"];
+    const orderStatus = ['o1','p1','g1','d1','d2','s1','c1','c2','c3','c4','b1','b2','b3','b4','e1','e2','e3','e4','e5','r1','r2','r3'];
 
     for (let i = 0; i < orderChannel.length; i++) {
         for (let j = 0; j < orderStatus.length; j++) {
             for (let k = 0; k < startDateArray.length; k++) {
-                const d = await getOrderData(orderChannel[i], orderStatus[j].order_status_code, startDateArray[k], endDateArray[k]);
-                await util.delayTime(2000);
+                const d = await getOrderData(orderChannel[i], orderStatus[j], startDateArray[k], endDateArray[k]);
+                await util.delayTime(1500);
                 console.log(d);
             }
-            await util.delayTime(2000);
+            await util.delayTime(1500);
         }
-        await util.delayTime(2000);
+        await util.delayTime(1500);
         return targetDate + " / " + orderChannel[i] + " update complete";
     }
 }
@@ -60,20 +66,14 @@ async function getOrderData(channel, status, startDate, endDate) {
     const jsonData = await util.parseXml(xmlRowData);
     
     if(jsonData.data == undefined) {
-        await util.delayTime(30000);
-        errorCount++
-        if( errorCount < 5 ) {
-            getOrderData(channel, status,startDate, endDate)
-        } else {
-            return "header data error";
-        } 
+        return "header data error";
     } else {
-        errorCount = 0;
         if(jsonData.data.header[0].code == '000') {
             const orderData = jsonData.data.return[0].order_data;
             if(orderData) {
                 for(let i = 0; i < orderData.length; i++) {
                     console.log("update order count: ", i+1, "/", orderData.length);
+                    if(orderData[i].orderGoodsData === undefined) { return };
                     console.log("update order goods count: ", orderData[i].orderGoodsData.length);
                     
                     const updateArray = orderData[i].orderGoodsData.map( 
@@ -127,7 +127,7 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , commission_rate=values(commission_rate)`;
                     
                     util.param.db.query(insertOrderSql, [updateArray]);
-                    await util.delayTime(2000);
+                    await util.delayTime(1000);
                 }
                 return channel + " / " + status + " / " + startDate + " update complete";
             }

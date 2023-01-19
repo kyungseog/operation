@@ -2,10 +2,27 @@
 
 const util = require("../data-center/utility.js");
 
-const targetDate = ['2022-10-16','2022-10-17','2022-10-18','2022-10-19','2022-10-20','2022-10-21','2022-10-22','2022-10-23','2022-10-24','2022-10-25'];
-for(let i = 0; i < targetDate.length; i++) {
-    getCount(targetDate[i]);
-};
+(async function start() {
+
+    const targetDate = [
+        '2022-11-18',
+        '2022-11-19',
+        '2022-11-20',
+        '2022-11-21',
+        '2022-11-22',
+        '2022-11-23',
+        '2022-11-24',
+        '2022-11-25',
+        '2022-11-26',
+        '2022-11-27'
+    ];
+
+    for(let i = 0; i < targetDate.length; i++) {
+        const d = await getCount(targetDate[i]);
+        console.log(d);
+        await util.delayTime(1000);
+    };
+})();
 
 async function getCount(targetDate) {
 
@@ -27,6 +44,7 @@ async function getCount(targetDate) {
         let data = await getProduct(targetDate, i + 1);
         console.log(i + 1, "/", pageCount,data);
     };
+    return targetDate + "update complete"
 }
 
 async function getProduct(targetDate, pageNo) {
@@ -138,6 +156,7 @@ async function getProduct(targetDate, pageNo) {
                         , cafe_variant_code=values(cafe_variant_code)`;
 
                 util.param.db.query(insertoptionSql, [optionData]);
+                await util.delayTime(500);
             }
         }
         await util.delayTime(2000);

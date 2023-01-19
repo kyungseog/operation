@@ -2,15 +2,13 @@
 
 const util = require("../data-center/utility.js");
 
-let errorCount = 0;
-
 const rule = new util.lib.schedule.RecurrenceRule();
 rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
 rule.hour = 3;
 rule.minute = 30;
 
 util.lib.schedule.scheduleJob("sales", rule, function(){
-    const targetDate = util.lib.today.minus({days: 1}).toFormat('yyyy-LL-dd');
+    const targetDate = util.lib.DateTime.now().minus({days: 1}).toFormat('yyyy-LL-dd');
     const start1 = `${targetDate} 00:00:00`;
     const end1 = `${targetDate} 11:59:59`;
     const start2 = `${targetDate} 12:00:00`;
@@ -23,22 +21,18 @@ util.lib.schedule.scheduleJob("sales", rule, function(){
 
 async function setOrderChannel(targetDate, startDateArray, endDateArray) {
     const orderChannel = ["shop","naverpay"];
-    const orderStatus = await util.sqlData(`
-        SELECT order_status_code 
-        FROM gododb.order_status 
-        WHERE order_status_code NOT IN ('g2','g3','g4','f1','f2','f3','z1','z2','z3','z4','z5')`
-    );
+    const orderStatus = ['o1','p1','g1','d1','d2','s1','c1','c2','c3','c4','b1','b2','b3','b4','e1','e2','e3','e4','e5','r1','r2','r3'];
 
     for (let i = 0; i < orderChannel.length; i++) {
         for (let j = 0; j < orderStatus.length; j++) {
             for (let k = 0; k < startDateArray.length; k++) {
-                const d = await getOrderData(orderChannel[i], orderStatus[j].order_status_code, startDateArray[k], endDateArray[k]);
-                await util.delayTime(2000);
+                const d = await getOrderData(orderChannel[i], orderStatus[j], startDateArray[k], endDateArray[k]);
+                await util.delayTime(1000);
                 console.log(d);
             }
-            await util.delayTime(2000);
+            await util.delayTime(1000);
         }
-        await util.delayTime(2000);
+        await util.delayTime(1000);
         console.log (targetDate, " / ", orderChannel[i], " update complete");
     }
 }
@@ -60,15 +54,8 @@ async function getOrderData(channel, status, startDate, endDate) {
     const jsonData = await util.parseXml(xmlRowData);
     
     if(jsonData.data == undefined) {
-        await util.delayTime(30000);
-        errorCount++
-        if( errorCount < 5 ) {
-            getOrderData(channel, status,startDate, endDate)
-        } else {
-            return "header data error";
-        } 
+        return "header data error";
     } else {
-        errorCount = 0;
         if(jsonData.data.header[0].code == '000') {
             const orderData = jsonData.data.return[0].order_data;
             if(orderData) {
@@ -127,7 +114,7 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , commission_rate=values(commission_rate)`;
                     
                     util.param.db.query(insertOrderSql, [updateArray]);
-                    await util.delayTime(2000);
+                    await util.delayTime(1000);
                 }
                 return channel + " / " + status + " / " + startDate + " update complete";
             }
