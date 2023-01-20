@@ -6,15 +6,16 @@ start();
 
 async function start(){
     const targetDate = [
-        '2022-09-22',
-        '2022-09-23',
-        '2022-09-24',
-        '2022-09-25',
-        '2022-09-26',
-        '2022-09-27',
-        '2022-09-28',
-        '2022-09-29',
-        '2022-09-30'
+        '2022-08-22',
+        '2022-08-23',
+        '2022-08-24',
+        '2022-08-25',
+        '2022-08-26',
+        '2022-08-27',
+        '2022-08-28',
+        '2022-08-29',
+        '2022-08-30',
+        '2022-08-31'
     ];
 
     for(let i = 0; i < targetDate.length; i++) {
@@ -39,12 +40,12 @@ async function setOrderChannel(targetDate, startDateArray, endDateArray) {
         for (let j = 0; j < orderStatus.length; j++) {
             for (let k = 0; k < startDateArray.length; k++) {
                 const d = await getOrderData(orderChannel[i], orderStatus[j], startDateArray[k], endDateArray[k]);
-                await util.delayTime(1500);
+                await util.delayTime(1000);
                 console.log(d);
             }
-            await util.delayTime(1500);
+            await util.delayTime(1000);
         }
-        await util.delayTime(1500);
+        await util.delayTime(1000);
         return targetDate + " / " + orderChannel[i] + " update complete";
     }
 }
@@ -91,7 +92,15 @@ async function getOrderData(channel, status, startDate, endDate) {
                             Number(s.goodsCnt[0]), 
                             orderData[i].memId == undefined ? null : orderData[i].memId[0],
                             s.orderStatus[0], 
-                            s.commission[0] 
+                            s.commission[0],
+                            (Number(s.divisionUseDeposit[0]) + Number(s.divisionGoodsDeliveryUseDeposit[0])),
+                            (Number(s.divisionUseMileage[0]) + Number(s.divisionGoodsDeliveryUseMileage[0])),
+                            (Number(s.divisionCouponOrderDcPrice[0]) + Number(s.memberDcPrice[0])),
+                            s.couponGoodsDcPrice[0],
+                            orderData[i].orderChannelFl[0],
+                            Number(orderData[i].settlePrice[0]),
+                            orderData[i].memGroupNm === undefined ? null : orderData[i].memGroupNm[0],
+                            orderData[i].firstSaleFl[0], 
                         ] );
 
                     const insertOrderSql = `
@@ -109,7 +118,15 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , quantity
                             , user_id
                             , status_id
-                            , commission_rate)
+                            , commission_rate
+                            , deposit
+                            , mileage
+                            , order_coupon
+                            , product_coupon
+                            , channel
+                            , payment_price
+                            , user_group
+                            , is_first)
                         VALUES ?
                         ON DUPLICATE KEY UPDATE 
                             id=values(id)
@@ -124,7 +141,15 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , quantity=values(quantity)
                             , user_id=values(user_id)
                             , status_id=values(status_id)
-                            , commission_rate=values(commission_rate)`;
+                            , commission_rate=values(commission_rate)
+                            , deposit=values(deposit)
+                            , mileage=values(mileage)
+                            , order_coupon=values(order_coupon)
+                            , product_coupon=values(product_coupon)
+                            , channel=values(channel)
+                            , payment_price=values(payment_price)
+                            , user_group=values(user_group)
+                            , is_first=values(is_first)`;
                     
                     util.param.db.query(insertOrderSql, [updateArray]);
                     await util.delayTime(1000);

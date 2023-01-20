@@ -1,28 +1,26 @@
 'use strict'
-const { DateTime } = require("luxon");
 
+const { DateTime } = require("luxon");
 const util = require("../data-center/utility.js");
 
 setInterval( () => {
     const startTime = DateTime.now().minus({minutes: 6}).toFormat('yyyy-LL-dd HH:mm:ss');
     const endTime = DateTime.now().toFormat('yyyy-LL-dd HH:mm:ss');
-    let errorCount = 0;
-    setOrderChannel(startTime, endTime, errorCount);
+    setOrderChannel(startTime, endTime);
 }, 5*60*1000);
 
-async function setOrderChannel(startTime, endTime, errorCount) {
+async function setOrderChannel(startTime, endTime) {
     console.log(startTime, endTime)
     const orderChannel = ["shop","naverpay"];
 
     for (let i = 0; i < orderChannel.length; i++) {
-        const d = await getOrderData(orderChannel[i], startTime, endTime, errorCount);
+        const d = await getOrderData(orderChannel[i], startTime, endTime);
         await util.delayTime(1000);
         console.log(d);
     }
 }
 
-async function getOrderData(channel, startDate, endDate, errorCount) {
-
+async function getOrderData(channel, startDate, endDate) {
     const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
         dateType: 'order', 
         startDate: startDate, 
@@ -37,15 +35,8 @@ async function getOrderData(channel, startDate, endDate, errorCount) {
     const jsonData = await util.parseXml(xmlRowData);
     
     if(jsonData.data == undefined) {
-        await util.delayTime(30000);
-        errorCount++
-        if( errorCount < 5 ) {
-            getOrderData(channel, startDate, endDate)
-        } else {
-            return "header data error";
-        } 
+        return "header data error";
     } else {
-        errorCount = 0;
         if(jsonData.data.header[0].code == '000') {
             const orderData = jsonData.data.return[0].order_data;
             if(orderData) {
@@ -66,9 +57,17 @@ async function getOrderData(channel, startDate, endDate, errorCount) {
                             (Number(s.goodsPrice[0]) + Number(s.optionPrice[0])), 
                             Number(s.goodsDcPrice[0]), 
                             Number(s.goodsCnt[0]), 
-                            orderData[i].memId == undefined ? null : orderData[i].memId[0],
+                            orderData[i].memId === undefined ? null : orderData[i].memId[0],
                             s.orderStatus[0], 
-                            s.commission[0] 
+                            s.commission[0],
+                            (Number(s.divisionUseDeposit[0]) + Number(s.divisionGoodsDeliveryUseDeposit[0])),
+                            (Number(s.divisionUseMileage[0]) + Number(s.divisionGoodsDeliveryUseMileage[0])),
+                            (Number(s.divisionCouponOrderDcPrice[0]) + Number(s.memberDcPrice[0])),
+                            s.couponGoodsDcPrice[0],
+                            orderData[i].orderChannelFl[0],
+                            Number(orderData[i].settlePrice[0]),
+                            orderData[i].memGroupNm === undefined ? null : orderData[i].memGroupNm[0],
+                            orderData[i].firstSaleFl[0],
                         ] );
 
                     const insertOrderSql = `
@@ -86,7 +85,15 @@ async function getOrderData(channel, startDate, endDate, errorCount) {
                             , quantity
                             , user_id
                             , status_id
-                            , commission_rate)
+                            , commission_rate
+                            , deposit
+                            , mileage
+                            , order_coupon
+                            , product_coupon
+                            , channel
+                            , payment_price
+                            , user_group
+                            , is_first)
                         VALUES ?
                         ON DUPLICATE KEY UPDATE 
                             id=values(id)
@@ -101,7 +108,15 @@ async function getOrderData(channel, startDate, endDate, errorCount) {
                             , quantity=values(quantity)
                             , user_id=values(user_id)
                             , status_id=values(status_id)
-                            , commission_rate=values(commission_rate)`;
+                            , commission_rate=values(commission_rate)
+                            , deposit=values(deposit)
+                            , mileage=values(mileage)
+                            , order_coupon=values(order_coupon)
+                            , product_coupon=values(product_coupon)
+                            , channel=values(channel)
+                            , payment_price=values(payment_price)
+                            , user_group=values(user_group)
+                            , is_first=values(is_first)`;
 
                     util.param.db.query(insertOrderSql, [updateArray]);
                     await util.delayTime(1000);
