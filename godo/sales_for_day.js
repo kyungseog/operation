@@ -1,5 +1,6 @@
 'use strict'
 
+const { DateTime } = require("luxon");
 const util = require("../data-center/utility.js");
 
 const rule = new util.lib.schedule.RecurrenceRule();
@@ -8,7 +9,7 @@ rule.hour = 3;
 rule.minute = 30;
 
 util.lib.schedule.scheduleJob("sales", rule, function(){
-    const targetDate = util.lib.DateTime.now().minus({days: 1}).toFormat('yyyy-LL-dd');
+    const targetDate = DateTime.now().minus({days: 1}).toFormat('yyyy-LL-dd');
     const start1 = `${targetDate} 00:00:00`;
     const end1 = `${targetDate} 11:59:59`;
     const start2 = `${targetDate} 12:00:00`;
@@ -78,7 +79,15 @@ async function getOrderData(channel, status, startDate, endDate) {
                             Number(s.goodsCnt[0]), 
                             orderData[i].memId == undefined ? null : orderData[i].memId[0],
                             s.orderStatus[0], 
-                            s.commission[0] 
+                            s.commission[0],
+                            (Number(s.divisionUseDeposit[0]) + Number(s.divisionGoodsDeliveryUseDeposit[0])),
+                            (Number(s.divisionUseMileage[0]) + Number(s.divisionGoodsDeliveryUseMileage[0])),
+                            (Number(s.divisionCouponOrderDcPrice[0]) + Number(s.memberDcPrice[0])),
+                            s.couponGoodsDcPrice[0],
+                            orderData[i].orderChannelFl[0],
+                            Number(orderData[i].settlePrice[0]),
+                            orderData[i].memGroupNm === undefined ? null : orderData[i].memGroupNm[0],
+                            orderData[i].firstSaleFl[0]
                         ] );
 
                     const insertOrderSql = `
@@ -96,7 +105,15 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , quantity
                             , user_id
                             , status_id
-                            , commission_rate)
+                            , commission_rate
+                            , deposit
+                            , mileage
+                            , order_coupon
+                            , product_coupon
+                            , channel
+                            , payment_price
+                            , user_group
+                            , is_first)
                         VALUES ?
                         ON DUPLICATE KEY UPDATE 
                             id=values(id)
@@ -111,7 +128,15 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , quantity=values(quantity)
                             , user_id=values(user_id)
                             , status_id=values(status_id)
-                            , commission_rate=values(commission_rate)`;
+                            , commission_rate=values(commission_rate)
+                            , deposit=values(deposit)
+                            , mileage=values(mileage)
+                            , order_coupon=values(order_coupon)
+                            , product_coupon=values(product_coupon)
+                            , channel=values(channel)
+                            , payment_price=values(payment_price)
+                            , user_group=values(user_group)
+                            , is_first=values(is_first)`;
                     
                     util.param.db.query(insertOrderSql, [updateArray]);
                     await util.delayTime(1000);

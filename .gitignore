@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # json file
-apikey.json
+*.json
