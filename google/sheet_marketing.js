@@ -1,22 +1,22 @@
 'use strict'
 
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const util = require("../data-center/utility.js");
+const keys = require('./data.json');
+const { insertSql } = require('./insertSQL.js');
 
-const koreaSheetId = util.lib.sheetIds.koreaSheetId;
-const japanSheetId = util.lib.sheetIds.japanSheetId;
 const marketingSheetId = util.lib.sheetIds.marketingSheetId;
 
-const rateRange = 'rate!A2:C1000';
-const customerRange = 'customer!A2:B1000';
-const liveRange = 'live!A2:F1000';
-const stockRange = 'stock!A2:L10000';
-const colorCodeRange = 'color_code!A2:C1000';
+const metaRange = 'meta!A2:M100000';
+const naverRange = 'naver!A2:L500000';
+const kakaoRange = 'kakao!A2:F1000';
+const googleRange = 'google!A2:L10000';
+const metaJPRange = 'meta_jp!A2:M100000';
 
 const client = new google.auth.JWT(
-  util.lib.keys.client_email,
+  keys.client_email,
   null, 
-  util.lib.keys.private_key, 
+  keys.private_key, 
   ['https://www.googleapis.com/auth/spreadsheets']
 );
 
@@ -33,17 +33,17 @@ client.authorize(function(err, tokens){
 async function gsRead(client) {
   const gsapi = google.sheets({version : 'v4', auth : client});
   const readOption = {
-      spreadsheetId: spreadsheetId,
-      range: rateRange
+      spreadsheetId: marketingSheetId,
+      range: metaRange
   };
   let data = await gsapi.spreadsheets.values.get(readOption);
   let dataArray = data.data.values.map(function(r){
-    return r[0];
+    return [r[3], r[2], r[4], r[5], r[6], r[7], r[8], r[9], r[10], r[11], r[12], r[0], r[1]];
   });
-  let calculateMonth = paidCheckMonth;
-  let dataTableName = 'a_mkrpartner'+ paidCheckYear + calculateMonth; //mariaDB의 월별 정산 데이터를 불러오기 위한 테이블 명칭
-  let partnerCode = dataArray;
 
-  partnerForLoop(dataTableName,partnerCode,calculateMonth,dataArray);
+  const dataSql = insertSql.marketing_meta;
 
+  util.param.db.query(dataSql, [dataArray], function(error, result) {
+    error? console.log(error): console.log('update marketing data');
+  });
 }
