@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/kyungseog/operation#readme",
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
     "@slack/bolt": "^3.12.2",
     "dotenv": "^16.0.3",
+    "googleapis": "^105.0.0",
     "luxon": "^3.2.1",
     "mysql2": "^2.3.3",
     "node-schedule": "^2.1.0",

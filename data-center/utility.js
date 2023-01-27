@@ -10,8 +10,6 @@ const schedule = require('node-schedule');
 const qs = require('querystring');
 const { DateTime } = require("luxon");
 
-const keys = {client_email:CLIENT_EMAIL, private_key: process.env.PRIVATE_KEY};
-
 dotenv.config({path: path.join(__dirname, '/.env')});
 const db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -85,6 +83,5 @@ module.exports.lib = {
     DateTime,
     today,
     originData,
-    keys,
     sheetIds
 }
