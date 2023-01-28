@@ -4,19 +4,12 @@ const util = require("../data-center/utility.js");
 
 (async function start() {
 
-    const targetDate = [
-        '2022-11-18',
-        '2022-11-19',
-        '2022-11-20',
-        '2022-11-21',
-        '2022-11-22',
-        '2022-11-23',
-        '2022-11-24',
-        '2022-11-25',
-        '2022-11-26',
-        '2022-11-27'
-    ];
-
+    let targetDate = [];
+    for ( let i = 1; i <= 28; i++ ) {
+        let day = i < 10 ? '0' + i : i;
+        targetDate.push('2021-02-' + day)
+    };
+    
     for(let i = 0; i < targetDate.length; i++) {
         const d = await getCount(targetDate[i]);
         console.log(d);
@@ -77,8 +70,8 @@ async function getProduct(targetDate, pageNo) {
             r.trendNo[0] == '' ? null : r.trendNo[0],
             r.originNm[0] == '' ? null : Object.keys(util.lib.originData)[ Object.values(util.lib.originData).indexOf(r.originNm[0]) ],
             r.taxFreeFl[0],
-            Number(r.fixedPrice[0]),
-            Number(r.goodsPrice[0]),
+            Number(r.fixedPrice[0]) > 100000000 ? 0 : Number(r.fixedPrice[0]),
+            Number(r.goodsPrice[0]) > 100000000 ? 0 : Number(r.goodsPrice[0]),
             r.cafe24ProductCode[0] == '' ? null : r.cafe24ProductCode[0]
         ];
   
