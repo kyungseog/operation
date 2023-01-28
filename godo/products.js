@@ -64,8 +64,8 @@ async function getProduct(pageNo) {
             r.trendNo[0] == '' ? null : r.trendNo[0],
             r.originNm[0] == '' ? null : Object.keys(util.lib.originData)[ Object.values(util.lib.originData).indexOf(r.originNm[0]) ],
             r.taxFreeFl[0],
-            Number(r.fixedPrice[0]),
-            Number(r.goodsPrice[0]),
+            Number(r.fixedPrice[0]) > 100000000 ? 0 : Number(r.fixedPrice[0]),
+            Number(r.goodsPrice[0]) > 100000000 ? 0 : Number(r.goodsPrice[0]),
             r.cafe24ProductCode[0] == '' ? null : r.cafe24ProductCode[0]
         ];
   
