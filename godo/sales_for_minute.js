@@ -55,7 +55,7 @@ async function getOrderData(channel, startDate, endDate) {
                             s.optionSno[0], 
                             Number(s.fixedPrice[0]), 
                             (Number(s.goodsPrice[0]) + Number(s.optionPrice[0])), 
-                            Number(s.goodsDcPrice[0]), 
+                            Math.round(Number(s.goodsDcPrice[0]) / Number(s.goodsCnt[0])), 
                             Number(s.goodsCnt[0]), 
                             orderData[i].memId === undefined ? null : orderData[i].memId[0],
                             s.orderStatus[0], 
