@@ -5,18 +5,11 @@ const util = require("../data-center/utility.js");
 start();
 
 async function start(){
-    const targetDate = [
-        '2022-10-11',
-        '2022-10-12',
-        '2022-10-13',
-        '2022-10-14',
-        '2022-10-15',
-        '2022-10-16',
-        '2022-10-17',
-        '2022-10-18',
-        '2022-10-19',
-        '2022-10-20',
-    ];
+    let targetDate = [];
+    for( let i = 1; i <= 26; i++ ) {
+        let day = i < 10 ? '0' + i : i;
+        targetDate.push('2023-01-' + day)
+    };
 
     for(let i = 0; i < targetDate.length; i++) {
         const start1 = `${targetDate[i]} 00:00:00`;
@@ -89,7 +82,7 @@ async function getOrderData(channel, status, startDate, endDate) {
                             s.optionSno[0], 
                             Number(s.fixedPrice[0]), 
                             (Number(s.goodsPrice[0]) + Number(s.optionPrice[0])), 
-                            Number(s.goodsDcPrice[0]), 
+                            Math.round(Number(s.goodsDcPrice[0]) / Number(s.goodsCnt[0])), 
                             Number(s.goodsCnt[0]), 
                             orderData[i].memId == undefined ? null : orderData[i].memId[0],
                             s.orderStatus[0], 
