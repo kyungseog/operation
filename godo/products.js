@@ -1,9 +1,7 @@
 'use strict'
 
+const { DateTime } = require("luxon");
 const util = require("../data-center/utility.js");
-
-const startDate = util.lib.today.minus({days: 1}).toFormat('yyyy-LL-dd');
-const endDate = util.lib.today.toFormat('yyyy-LL-dd');
 
 const rule = new util.lib.schedule.RecurrenceRule();
 rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
@@ -13,7 +11,9 @@ rule.minute = 40;
 util.lib.schedule.scheduleJob( "getProductData", rule, () => getCount() );
 
 async function getCount() {
-
+    const startDate = DateTime.now().minus({days: 1}).toFormat('yyyy-LL-dd');
+    const endDate = DateTime.now().toFormat('yyyy-LL-dd');
+    
     const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
         searchDateType: 'modDt', 
         startDate: startDate, 
