@@ -21,8 +21,8 @@ const db = mysql.createPool({
 
 const main_url = 'https://openhub.godo.co.kr/godomall5';
 const main_key = `partner_key=${process.env.PARTNER_KEY}&key=${process.env.KEY}`;
+const weather_key = process.env.MY_SERVICE_KEY;
 
-const today = DateTime.now();
 const originData = {
     KR: '한국', 
     JP: '일본', 
@@ -47,7 +47,7 @@ module.exports.slackApp = new App({
 
 module.exports.delayTime = ms => new Promise(res => setTimeout(res,ms));
 
-module.exports.xmlData = function xmlData(options) {
+module.exports.requestData = function requestData(options) {
     return new Promise( (resolve, reject) => {
         request(options, (err, response, result) => {
             return err ? reject(err) : resolve(result);
@@ -74,7 +74,8 @@ module.exports.sqlData = function sqlData(query, data) {
 module.exports.param = {
     main_url,
     main_key,
-    db
+    db,
+    weather_key
 }
 
 module.exports.lib = {
