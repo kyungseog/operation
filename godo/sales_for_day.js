@@ -8,20 +8,31 @@ rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
 rule.hour = 3;
 rule.minute = 30;
 
-util.lib.schedule.scheduleJob("sales", rule, function(){
-    const targetDate = DateTime.now().minus({days: 1}).toFormat('yyyy-LL-dd');
-    const start1 = `${targetDate} 00:00:00`;
-    const end1 = `${targetDate} 11:59:59`;
-    const start2 = `${targetDate} 12:00:00`;
-    const end2 = `${targetDate} 23:59:59`;
+util.lib.schedule.scheduleJob("sales", rule, () => start());
 
-    const startDateArray = [start1, start2];
-    const endDateArray = [end1, end2];
-    setOrderChannel(targetDate, startDateArray, endDateArray);
-});
+async function start(){
+    let targetDate = [];
+    for( let i = 1; i <= 20; i++ ) {
+        let target = DateTime.now().minus({days: i}).toFormat('yyyy-LL-dd');
+        targetDate.push(target);
+    };
+
+    for(let i = 0; i < targetDate.length; i++) {
+        const start1 = `${targetDate[i]} 00:00:00`;
+        const end1 = `${targetDate[i]} 11:59:59`;
+        const start2 = `${targetDate[i]} 12:00:00`;
+        const end2 = `${targetDate[i]} 23:59:59`;
+        
+        const startDateArray = [start1, start2];
+        const endDateArray = [end1, end2];
+        const signal = await setOrderChannel(targetDate[i], startDateArray, endDateArray);
+        await util.delayTime(1000);
+        console.log(signal);
+    }
+}
 
 async function setOrderChannel(targetDate, startDateArray, endDateArray) {
-    const orderChannel = ["shop","naverpay"];
+    const orderChannel = ["naverpay"]; //"shop", 
     const orderStatus = ['o1','p1','g1','d1','d2','s1','c1','c2','c3','c4','b1','b2','b3','b4','e1','e2','e3','e4','e5','r1','r2','r3'];
 
     for (let i = 0; i < orderChannel.length; i++) {
@@ -34,14 +45,15 @@ async function setOrderChannel(targetDate, startDateArray, endDateArray) {
             await util.delayTime(1000);
         }
         await util.delayTime(1000);
-        console.log (targetDate, " / ", orderChannel[i], " update complete");
+        console.log(targetDate + " / " + orderChannel[i] + " update complete");
     }
+    return "complete"
 }
 
 async function getOrderData(channel, status, startDate, endDate) {
 
     const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
-        dateType: 'modify', 
+        dateType: 'order', 
         startDate: startDate, 
         endDate: endDate, 
         orderChannel: channel,
@@ -62,6 +74,7 @@ async function getOrderData(channel, status, startDate, endDate) {
             if(orderData) {
                 for(let i = 0; i < orderData.length; i++) {
                     console.log("update order count: ", i+1, "/", orderData.length);
+                    if(orderData[i].orderGoodsData === undefined) { return };
                     console.log("update order goods count: ", orderData[i].orderGoodsData.length);
                     
                     const updateArray = orderData[i].orderGoodsData.map( 
@@ -87,7 +100,7 @@ async function getOrderData(channel, status, startDate, endDate) {
                             orderData[i].orderChannelFl[0],
                             Number(orderData[i].settlePrice[0]),
                             orderData[i].memGroupNm === undefined ? null : orderData[i].memGroupNm[0],
-                            orderData[i].firstSaleFl[0]
+                            orderData[i].firstSaleFl[0], 
                         ] );
 
                     const insertOrderSql = `

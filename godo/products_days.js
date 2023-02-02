@@ -7,7 +7,7 @@ const util = require("../data-center/utility.js");
     let targetDate = [];
     for ( let i = 1; i <= 28; i++ ) {
         let day = i < 10 ? '0' + i : i;
-        targetDate.push('2021-02-' + day)
+        targetDate.push('2020-02-' + day)
     };
     
     for(let i = 0; i < targetDate.length; i++) {

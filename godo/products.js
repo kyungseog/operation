@@ -29,12 +29,12 @@ async function getCount() {
     console.log("total page count : ", pageCount);
 
     for(let i = 0; i < pageCount; i++) {
-        let data = await getProduct(i + 1);
+        let data = await getProduct(i + 1, startDate, endDate);
         console.log(i + 1, "/", pageCount,data);
     };
 }
 
-async function getProduct(pageNo) {
+async function getProduct(pageNo, startDate, endDate) {
 
     const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
         searchDateType: 'modDt', 
