@@ -1,6 +1,6 @@
 'use strict'
 
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const util = require("../data-center/utility.js");
 const keys = require('./data.json');
 const { insertSql } = require('./insertSQL.js');
@@ -11,9 +11,10 @@ const rateRange = 'rate!A2:C10000';
 const supplierRange = 'supplier!A2:D10000';
 const brandRange = 'brand!A2:H10000';
 const customerRange = 'customer!A2:C500000';
-const liveRange = 'live!A2:F10000';
+const liveRange = 'live!A2:G10000';
 const stockRange = 'stock!A2:L20000';
 const costCodeRange = 'cost_code!A2:C500000';
+const costRange = 'cost!A2:C100000';
 
 const client = new google.auth.JWT(
   keys.client_email,
@@ -34,13 +35,14 @@ client.authorize(function(err, tokens){
 
 async function updateKoreaData(client) {
   const updateArray = [
-    [rateRange, exchange_rate],
-    [supplierRange, suppliers],
-    [brandRange, brands],
-    [customerRange, korea_users],
-    [liveRange, live_commerces],
-    [stockRange, stocks],
-    [costCodeRange, cost_ids]
+    [rateRange, insertSql.exchange_rate],
+    [supplierRange, insertSql.suppliers],
+    [brandRange, insertSql.brands],
+    [customerRange, insertSql.korea_users],
+    [liveRange, insertSql.live_commerces],
+    [stockRange, insertSql.stocks],
+    [costCodeRange, insertSql.cost_ids],
+    [costRange, insertSql.costs]
   ];
 
   const gsapi = google.sheets({version : 'v4', auth : client});
@@ -53,10 +55,10 @@ async function updateKoreaData(client) {
     let datas = await gsapi.spreadsheets.values.get(options);
     let dataArray = datas.data.values;
 
-    const sql = insertSql[updateArray[i][1]];
+    const sql = updateArray[i][1];
 
     util.param.db.query(sql, [dataArray], function(error, result) {
-      error ? console.log(error) : console.log('update korea rate data');
+      error ? console.log(error) : console.log('update korea data');
     });
     await util.delayTime(1000);
   }

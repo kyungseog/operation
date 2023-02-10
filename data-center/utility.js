@@ -82,7 +82,6 @@ module.exports.lib = {
     schedule,
     qs,
     DateTime,
-    today,
     originData,
     sheetIds
 }

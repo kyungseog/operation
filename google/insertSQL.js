@@ -107,6 +107,15 @@ module.exports.insertSql = {
       custom_variant_id=values(custom_variant_id)
       , id=values(id)`,
 
+    costs: `
+    INSERT INTO management.costs
+      (issued_at
+      , id
+      , cost) 
+    VALUES ? 
+    ON DUPLICATE KEY UPDATE 
+      cost=values(cost)`,
+
     marketing_meta : `
     INSERT INTO management.korea_marketing_meta 
       (id
