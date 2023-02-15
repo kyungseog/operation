@@ -34,6 +34,7 @@ client.authorize(function(err, tokens){
 });
 
 async function updateKoreaData(client) {
+  const updateName = ['rate','supplier','brand','customer','live','stock','costCode','cost']
   const updateArray = [
     [rateRange, insertSql.exchange_rate],
     [supplierRange, insertSql.suppliers],
@@ -58,7 +59,7 @@ async function updateKoreaData(client) {
     const sql = updateArray[i][1];
 
     util.param.db.query(sql, [dataArray], function(error, result) {
-      error ? console.log(error) : console.log('update korea data');
+      error ? console.log(error) : console.log(`update korea ${updateName[i]} data`);
     });
     await util.delayTime(1000);
   }

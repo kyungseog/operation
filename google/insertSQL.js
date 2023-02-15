@@ -116,33 +116,25 @@ module.exports.insertSql = {
     ON DUPLICATE KEY UPDATE 
       cost=values(cost)`,
 
-    marketing_meta : `
-    INSERT INTO management.korea_marketing_meta 
+    marketing : `
+    INSERT INTO management.korea_marketing 
       (id
+      , channel
+      , created_date
       , name
       , cost
-      , cpc
-      , ctr
-      , exposure
-      , reach
       , click
+      , exposure
       , conversion
-      , roas
-      , brand_id
-      , start_date
-      , end_date) 
+      , brand_id) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
-      name=values(name)
+      channel=values(channel)
+      , created_date=values(created_date)
+      , name=values(name)
       , cost=values(cost)
-      , cpc=values(cpc)
-      , ctr=values(ctr)
-      , exposure=values(exposure)
-      , reach=values(reach)
       , click=values(click)
+      , exposure=values(exposure)
       , conversion=values(conversion)
-      , roas=values(roas)
-      , brand_id=values(brand_id)
-      , start_date=values(start_date)
-      , end_date=values(end_date)`
+      , brand_id=values(brand_id)`
 }
