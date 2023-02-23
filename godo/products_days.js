@@ -5,9 +5,9 @@ const util = require("../data-center/utility.js");
 (async function start() {
 
     let targetDate = [];
-    for ( let i = 1; i <= 28; i++ ) {
+    for ( let i = 2; i <= 5; i++ ) {
         let day = i < 10 ? '0' + i : i;
-        targetDate.push('2020-02-' + day)
+        targetDate.push('2021-11-' + day)
     };
     
     for(let i = 0; i < targetDate.length; i++) {
@@ -28,7 +28,7 @@ async function getCount(targetDate) {
         url: `${util.param.main_url}/goods/Goods_Search.php?${paramDetail}`
     };
 
-    const xmlRowData = await util.xmlData(options);
+    const xmlRowData = await util.requestData(options);
     const jsonData = await util.parseXml(xmlRowData);
     const pageCount = Number(jsonData.data.header[0].max_page[0]);
     console.log("total page count : ", pageCount);
@@ -52,14 +52,14 @@ async function getProduct(targetDate, pageNo) {
         url: `${util.param.main_url}/goods/Goods_Search.php?${paramDetail}`
     };
 
-    const xmlRowData = await util.xmlData(options);
+    const xmlRowData = await util.requestData(options);
     const jsonData = await util.parseXml(xmlRowData);
     const goodsData = jsonData.data.return[0].goods_data;
     console.log("update product count: ", goodsData.length);
 
     for(let i = 0; i < goodsData.length; i++) {
         const r = goodsData[i];
-
+        console.log(r.goodsNo[0]);
         const productData = [
             r.goodsNo[0],
             r.goodsNm[0],

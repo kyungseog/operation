@@ -26,6 +26,7 @@ module.exports.insertSql = {
       (id
       , name
       , type
+      , squad
       , manager_id
       , supplier_id
       , commission
@@ -35,6 +36,7 @@ module.exports.insertSql = {
     ON DUPLICATE KEY UPDATE 
       name=VALUES(name)
       , type=VALUES(type)
+      , squad=VALUES(squad)
       , manager_id=VALUES(manager_id)
       , supplier_id=VALUES(supplier_id)
       , commission=VALUES(commission)
@@ -101,10 +103,12 @@ module.exports.insertSql = {
     INSERT INTO management.cost_ids
       (barcode
       , custom_variant_id
+      , product_variant_id
       , id) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
       custom_variant_id=values(custom_variant_id)
+      , product_variant_id=values(product_variant_id)
       , id=values(id)`,
 
     costs: `

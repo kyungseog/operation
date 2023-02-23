@@ -9,11 +9,11 @@ const koreaSheetId = util.lib.sheetIds.koreaSheetId;
 
 const rateRange = 'rate!A2:C10000';
 const supplierRange = 'supplier!A2:D10000';
-const brandRange = 'brand!A2:H10000';
+const brandRange = 'brand!A2:I10000';
 const customerRange = 'customer!A2:C500000';
 const liveRange = 'live!A2:G10000';
 const stockRange = 'stock!A2:L20000';
-const costCodeRange = 'cost_code!A2:C500000';
+const costCodeRange = 'cost_code!A2:D500000';
 const costRange = 'cost!A2:C100000';
 
 const client = new google.auth.JWT(
