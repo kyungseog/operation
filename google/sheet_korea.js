@@ -63,5 +63,5 @@ async function updateKoreaData(client) {
     });
     await util.delayTime(1000);
   }
-
+  console.log(`update complete`);
 }
