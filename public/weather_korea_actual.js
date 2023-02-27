@@ -14,7 +14,6 @@ async function actualWeather() {
   const targetDate = DateTime.now().minus({days: 1}).toFormat('yyyyLLdd');
 console.log(util.param.weather_key)
   const paramDetail = util.lib.qs.stringify({
-    serviceKey: util.param.weather_key, 
     numOfRows: 100, 
     dataType: 'JSON', 
     dataCd: 'ASOS',
@@ -26,12 +25,12 @@ console.log(util.param.weather_key)
   
   const options = { 
     method: 'GET',
-    url: `http://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList?${paramDetail}`
+    url: `http://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList?serviceKey=${util.param.weather_key}&${paramDetail}`
   };
   
   const actualData = await util.requestData(options);
-  console.log(actualData);
-  let actualArray = actualData.response.body.items.item;
+  const jsonData = await JSON.parse(actualData);
+  let actualArray = jsonData.response.body.items.item;
   let uploadData = actualArray.map(u => ['KR', 'seoul', u.tm, u.minTa, u.maxTa, 0, 0, u.sumRn, u.ddMes]);
   
   const sql = `
