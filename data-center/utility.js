@@ -37,7 +37,8 @@ const originData = {
 const sheetIds = {
     koreaSheetId: process.env.KOREA_SHEET_ID,
     japanSheetId: process.env.JAPAN_SHEET_ID,
-    marketingSheetId: process.env.MARKETING_SHEET_ID
+    marketingSheetId: process.env.MARKETING_SHEET_ID,
+    costSheetId: process.env.COST_SHEET_ID,
 };
 
 module.exports.slackApp = new App({
