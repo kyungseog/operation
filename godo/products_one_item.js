@@ -2,45 +2,9 @@
 
 const util = require("../data-center/utility.js");
 
-(async function start() {
+getProduct();
 
-    let targetDate = [];
-    for ( let i = 9; i <= 28; i++ ) {
-        let day = i < 10 ? '0' + i : i;
-        targetDate.push('2023-02-' + day)
-    };
-    
-    for(let i = 0; i < targetDate.length; i++) {
-        const d = await getCount(targetDate[i]);
-        console.log(d);
-        await util.delayTime(1000);
-    };
-})();
-
-async function getCount(targetDate) {
-
-    const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
-        searchDateType: 'regDt', 
-        startDate: targetDate, 
-        endDate: targetDate } );
-
-    const options = { method: 'POST',
-        url: `${util.param.main_url}/goods/Goods_Search.php?${paramDetail}`
-    };
-
-    const xmlRowData = await util.requestData(options);
-    const jsonData = await util.parseXml(xmlRowData);
-    const pageCount = Number(jsonData.data.header[0].max_page[0]);
-    console.log("total page count : ", pageCount);
-
-    for(let i = 0; i < pageCount; i++) {
-        let data = await getProduct(targetDate, i + 1);
-        console.log(i + 1, "/", pageCount,data);
-    };
-    return targetDate + "update complete"
-}
-
-async function getProduct(targetDate, pageNo) {
+async function getProduct() {
 
     const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
         searchDateType: 'regDt', 
