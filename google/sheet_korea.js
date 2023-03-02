@@ -13,8 +13,6 @@ const brandRange = 'brand!A2:I10000';
 const customerRange = 'customer!A2:C500000';
 const liveRange = 'live!A2:G10000';
 const stockRange = 'stock!A2:L20000';
-const costCodeRange = 'cost_code!A2:D500000';
-const costRange = 'cost!A2:C100000';
 
 const client = new google.auth.JWT(
   keys.client_email,
@@ -34,7 +32,7 @@ client.authorize(function(err, tokens){
 });
 
 async function updateKoreaData(client) {
-  const updateName = ['rate','supplier','brand','customer','live','stock','costCode','cost']
+  const updateName = ['rate','supplier','brand','customer','live','stock']
   const updateArray = [
     [rateRange, insertSql.exchange_rate],
     [supplierRange, insertSql.suppliers],
@@ -42,8 +40,6 @@ async function updateKoreaData(client) {
     [customerRange, insertSql.korea_users],
     [liveRange, insertSql.live_commerces],
     [stockRange, insertSql.stocks],
-    [costCodeRange, insertSql.cost_ids],
-    [costRange, insertSql.costs]
   ];
 
   const gsapi = google.sheets({version : 'v4', auth : client});

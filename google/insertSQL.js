@@ -99,26 +99,17 @@ module.exports.insertSql = {
       ,cost=values(cost)
       ,total_cost=values(total_cost)`,
 
-    cost_ids: `
-    INSERT INTO management.cost_ids
-      (barcode
-      , custom_variant_id
-      , product_variant_id
-      , id) 
-    VALUES ? 
-    ON DUPLICATE KEY UPDATE 
-      custom_variant_id=values(custom_variant_id)
-      , product_variant_id=values(product_variant_id)
-      , id=values(id)`,
-
     costs: `
     INSERT INTO management.costs
-      (issued_at
-      , id
+      (product_id
+      , product_variant_id
+      , custom_variant_id
       , cost) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
-      cost=values(cost)`,
+      product_id=values(product_id)
+      , custom_variant_id=values(custom_variant_id)
+      , cost=values(cost)`,
 
     marketing : `
     INSERT INTO management.korea_marketing 
