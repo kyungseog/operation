@@ -26,7 +26,7 @@ async function updateMarketingData(client) {
   const gsapi = google.sheets({version : 'v4', auth : client});
   const options = {
     spreadsheetId: util.lib.sheetIds.marketingSheetId,
-    range: 'upload_kr!A2:I100000'
+    range: 'upload_kr!A2:J100000'
   };
 
   let datas = await gsapi.spreadsheets.values.get(options);

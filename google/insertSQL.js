@@ -115,21 +115,23 @@ module.exports.insertSql = {
     INSERT INTO management.korea_marketing 
       (id
       , channel
-      , created_date
+      , created_at
       , name
       , cost
       , click
       , exposure
       , conversion
-      , brand_id) 
+      , brand_id
+      , sno_no) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
       channel=values(channel)
-      , created_date=values(created_date)
+      , created_at=values(created_at)
       , name=values(name)
       , cost=values(cost)
       , click=values(click)
       , exposure=values(exposure)
       , conversion=values(conversion)
-      , brand_id=values(brand_id)`
+      , brand_id=values(brand_id)
+      , sno_no=values(sno_no)`
 }
