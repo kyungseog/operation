@@ -8,11 +8,12 @@ const { insertSql } = require('./insertSQL.js');
 const koreaSheetId = util.lib.sheetIds.koreaSheetId;
 
 const rateRange = 'rate!A2:C10000';
-const supplierRange = 'supplier!A2:D10000';
+const supplierRange = 'supplier!A2:E10000';
 const brandRange = 'brand!A2:I10000';
 const customerRange = 'customer!A2:C500000';
 const liveRange = 'live!A2:G10000';
 const stockRange = 'stock!A2:L20000';
+const ifdoRange = 'ifdo!A2:K20000';
 
 const client = new google.auth.JWT(
   keys.client_email,
@@ -32,7 +33,7 @@ client.authorize(function(err, tokens){
 });
 
 async function updateKoreaData(client) {
-  const updateName = ['rate','supplier','brand','customer','live','stock']
+  const updateName = ['rate','supplier','brand','customer','live','stock','ifdo']
   const updateArray = [
     [rateRange, insertSql.exchange_rate],
     [supplierRange, insertSql.suppliers],
@@ -40,6 +41,7 @@ async function updateKoreaData(client) {
     [customerRange, insertSql.korea_users],
     [liveRange, insertSql.live_commerces],
     [stockRange, insertSql.stocks],
+    [ifdoRange, insertSql.ifdo],
   ];
 
   const gsapi = google.sheets({version : 'v4', auth : client});
