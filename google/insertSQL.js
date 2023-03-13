@@ -28,21 +28,25 @@ module.exports.insertSql = {
       (id
       , name
       , type
+      , design_type
       , squad
       , manager_id
       , supplier_id
       , commission
       , created_at
+      , deleted_at
       , status_id) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
       name=VALUES(name)
       , type=VALUES(type)
+      , design_type=VALUES(design_type)
       , squad=VALUES(squad)
       , manager_id=VALUES(manager_id)
       , supplier_id=VALUES(supplier_id)
       , commission=VALUES(commission)
       , created_at=VALUES(created_at)
+      , deleted_at=VALUES(deleted_at)
       , status_id=VALUES(status_id)`,
 
     korea_users: `

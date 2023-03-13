@@ -9,7 +9,7 @@ const koreaSheetId = util.lib.sheetIds.koreaSheetId;
 
 const rateRange = 'rate!A2:C10000';
 const supplierRange = 'supplier!A2:E10000';
-const brandRange = 'brand!A2:I10000';
+const brandRange = 'brand!A2:K10000';
 const customerRange = 'customer!A2:C500000';
 const liveRange = 'live!A2:G10000';
 const stockRange = 'stock!A2:L20000';
