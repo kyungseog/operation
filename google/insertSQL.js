@@ -1,5 +1,5 @@
 module.exports.insertSql = {
-    exchange_rate: `
+  exchange_rate: `
     INSERT INTO management.exchange_rate
       (created_at
       , usd
@@ -8,27 +8,34 @@ module.exports.insertSql = {
     ON DUPLICATE KEY UPDATE 
       usd=values(usd)
       , jpy=values(jpy)`,
-    
-    suppliers: `
+
+  suppliers: `
     INSERT INTO management.suppliers
       (id
       , integration_id
       , integration_name
       , name
+      , ceo
+      , registration_id
+      , email
       , status_id) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
       integration_id=values(integration_id)
       , integration_name=values(integration_name)
       , name=values(name)
+      , ceo=values(ceo)
+      , registration_id=values(registration_id)
+      , email=values(email)
       , status_id=values(status_id)`,
 
-    brands: `
+  brands: `
     INSERT INTO management.brands
       (id
       , name
       , type
       , design_type
+      , sales_country
       , squad
       , manager_id
       , supplier_id
@@ -41,6 +48,7 @@ module.exports.insertSql = {
       name=VALUES(name)
       , type=VALUES(type)
       , design_type=VALUES(design_type)
+      , sales_country=VALUES(sales_country)
       , squad=VALUES(squad)
       , manager_id=VALUES(manager_id)
       , supplier_id=VALUES(supplier_id)
@@ -49,23 +57,32 @@ module.exports.insertSql = {
       , deleted_at=VALUES(deleted_at)
       , status_id=VALUES(status_id)`,
 
-    korea_users: `
+  korea_users: `
     INSERT INTO management.korea_users
       (id
       , created_at
-      , updated_at) 
+      , updated_at
+      , user_birthday
+      , first_child_birthday
+      , second_child_birthday
+      , cellphone) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
       created_at=VALUES(created_at)
-      , updated_at=updated_at`,
+      , updated_at=updated_at
+      , user_birthday=VALUES(user_birthday)
+      , first_child_birthday=VALUES(first_child_birthday)
+      , second_child_birthday=VALUES(second_child_birthday)
+      , cellphone=VALUES(cellphone)`,
 
-    live_commerces: `
+  live_commerces: `
     INSERT INTO management.live_commerces
       (id
       , campaign_key
       , name
       , brand_id
       , event_sno
+      , cost
       , start_date
       , end_date) 
     VALUES ? 
@@ -74,10 +91,11 @@ module.exports.insertSql = {
       , name=values(name)
       , brand_id=values(brand_id)
       , event_sno=values(event_sno)
+      , cost=values(cost)
       , start_date=values(start_date)
       , end_date=values(end_date)`,
 
-    ifdo: `
+  ifdo: `
     INSERT INTO management.korea_ifdo
       (id
       , issued_at
@@ -103,7 +121,7 @@ module.exports.insertSql = {
       ,is_sno=values(is_sno)
       ,sno_no=values(sno_no)`,
 
-      stocks: `
+  stocks: `
       INSERT INTO management.stocks
         (seller_name
         , seller_id
@@ -131,7 +149,7 @@ module.exports.insertSql = {
         ,cost=values(cost)
         ,total_cost=values(total_cost)`,
 
-    costs: `
+  costs: `
     INSERT INTO management.costs
       (product_id
       , product_variant_id
@@ -143,7 +161,7 @@ module.exports.insertSql = {
       , custom_variant_id=values(custom_variant_id)
       , cost=values(cost)`,
 
-    marketing : `
+  marketing: `
     INSERT INTO management.korea_marketing 
       (id
       , channel
@@ -165,5 +183,5 @@ module.exports.insertSql = {
       , exposure=values(exposure)
       , conversion=values(conversion)
       , brand_id=values(brand_id)
-      , sno_no=values(sno_no)`
-}
+      , sno_no=values(sno_no)`,
+};
