@@ -6,7 +6,7 @@ const util = require("../data-center/utility.js");
 estimateTemperature();
 
 async function estimateTemperature() {
-  const targetDate = "202303190600"; //DateTime.now().toFormat('yyyyLLdd') + "0600";
+  const targetDate = DateTime.now().toFormat("yyyyLLdd") + "0600";
 
   const temperatureParam = util.lib.qs.stringify({
     numOfRows: 100,
