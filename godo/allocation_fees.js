@@ -5,14 +5,14 @@ const util = require("../data-center/utility.js");
 
 (async function start() {
   let targetDate = [];
-  for (let i = 16; i <= 19; i++) {
+  for (let i = 1; i <= 22; i++) {
     let day = i < 10 ? "0" + i : i;
     targetDate.push("2023-03-" + day);
   }
 
   for (let i = 0; i < targetDate.length; i++) {
-    const marketing = await allocationMarketingFees(targetDate[i]);
-    console.log("marketing", marketing);
+    // const marketing = await allocationMarketingFees(targetDate[i]);
+    // console.log("marketing", marketing);
     const logistic = await calculationLogisticFees(targetDate[i]);
     console.log("logistic", logistic);
     await util.delayTime(1000);
@@ -68,27 +68,38 @@ async function allocationMarketingFees(createdAt) {
 async function calculationLogisticFees(createdAt) {
   const getDailyLogisticFees = `
   SELECT tt.brand_id
-        , sum(tt.polybag) + sum(tt.logistic_fixed) AS logistic_fee
-      FROM (select a.id, b.brand_id, sum(a.quantity) * 52 as polybag, co.logistic_fixed
-        from management.korea_orders a
+        , SUM(tt.polybag) + SUM(tt.logistic_fixed) AS logistic_fee
+      FROM (
+        SELECT a.id
+          , b.brand_id
+          , SUM(a.quantity) * 52 as polybag
+          , co.logistic_fixed
+        FROM management.korea_orders a
           LEFT JOIN management.products b on a.product_id = b.id
           LEFT JOIN management.brands c on b.brand_id = c.id
           LEFT JOIN management.suppliers d on c.supplier_id = d.id
           LEFT JOIN (
-            SELECT a.id, ROUND((2746 + 2100 + 565) / COUNT(a.id)) as logistic_fixed 
-            FROM management.korea_orders a
-              LEFT JOIN management.products b on a.product_id = b.id
-              LEFT JOIN management.brands c on b.brand_id = c.id
-              LEFT JOIN management.suppliers d on c.supplier_id = d.id
-            WHERE a.payment_date BETWEEN ? AND ?
-              AND d.id = '1' 
-              AND a.status_id IN ('p1','g1','d1','d2','s1')
-            GROUP BY a.id) co ON a.id = co.id
+            SELECT a.id
+              , ROUND((4000 + 3400) / COUNT(a.id)) as logistic_fixed 
+            FROM ( 
+              SELECT a.id, b.brand_id
+              FROM management.korea_orders a
+                LEFT JOIN management.products b on a.product_id = b.id
+                LEFT JOIN management.brands c on b.brand_id = c.id
+                LEFT JOIN management.suppliers d on c.supplier_id = d.id
+              WHERE a.payment_date BETWEEN ? AND ?
+                AND d.id = '1' 
+                AND a.status_id IN ('p1','g1','d1','d2','s1')
+              GROUP BY a.id, b.brand_id
+            ) a 
+          GROUP BY a.id
+          ) co ON a.id = co.id
       WHERE a.payment_date BETWEEN ? AND ?
         AND d.id = '1'
         AND a.status_id IN ('p1','g1','d1','d2','s1')
-      GROUP BY a.id, b.brand_id) tt
-      group by tt.brand_id `;
+      GROUP BY a.id, b.brand_id
+      ) tt
+      GROUP by tt.brand_id `;
 
   const logisticDataByBrand = await util.sqlData(getDailyLogisticFees, [
     createdAt,
