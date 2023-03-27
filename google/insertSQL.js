@@ -17,6 +17,12 @@ module.exports.insertSql = {
       , name
       , ceo
       , registration_id
+      , account_type
+      , tax_type
+      , account_count
+      , bank_name
+      , bank_account
+      , account_owner
       , email
       , status_id) 
     VALUES ? 
@@ -26,6 +32,12 @@ module.exports.insertSql = {
       , name=values(name)
       , ceo=values(ceo)
       , registration_id=values(registration_id)
+      , account_type=values(account_type)
+      , tax_type=values(tax_type)
+      , account_count=values(account_count)
+      , bank_name=values(bank_name)
+      , bank_account=values(bank_account)
+      , account_owner=values(account_owner)
       , email=values(email)
       , status_id=values(status_id)`,
 
@@ -81,7 +93,8 @@ module.exports.insertSql = {
       , campaign_key
       , name
       , brand_id
-      , event_sno
+      , live_page_sno
+      , brand_page_sno
       , cost
       , start_date
       , end_date) 
@@ -90,36 +103,11 @@ module.exports.insertSql = {
       campaign_key=values(campaign_key)
       , name=values(name)
       , brand_id=values(brand_id)
-      , event_sno=values(event_sno)
+      , live_page_sno=values(live_page_sno)
+      , brand_page_sno=values(brand_page_sno)
       , cost=values(cost)
       , start_date=values(start_date)
       , end_date=values(end_date)`,
-
-  ifdo: `
-    INSERT INTO management.korea_ifdo
-      (id
-      , issued_at
-      , name
-      , url
-      , impression
-      , inflow
-      , buying_count
-      , buying_amount
-      , buying_rate
-      , is_sno
-      , sno_no) 
-    VALUES ? 
-    ON DUPLICATE KEY UPDATE 
-    issued_at=values(issued_at)
-      ,name=values(name)
-      ,url=values(url)
-      ,impression=values(impression)
-      ,inflow=values(inflow)
-      ,buying_count=values(buying_count)
-      ,buying_amount=values(buying_amount)
-      ,buying_rate=values(buying_rate)
-      ,is_sno=values(is_sno)
-      ,sno_no=values(sno_no)`,
 
   stocks: `
       INSERT INTO management.stocks
