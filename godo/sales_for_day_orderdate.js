@@ -1,103 +1,128 @@
-'use strict'
+"use strict";
 
 const util = require("../data-center/utility.js");
 
 start();
 
-async function start(){
-    let targetDate = [];
-    for( let i = 1; i <= 26; i++ ) {
-        let day = i < 10 ? '0' + i : i;
-        targetDate.push('2023-01-' + day)
-    };
+async function start() {
+  let targetDate = [];
+  for (let i = 1; i <= 31; i++) {
+    let day = i < 10 ? "0" + i : i;
+    targetDate.push("2023-03-" + day);
+  }
 
-    for(let i = 0; i < targetDate.length; i++) {
-        const start1 = `${targetDate[i]} 00:00:00`;
-        const end1 = `${targetDate[i]} 11:59:59`;
-        const start2 = `${targetDate[i]} 12:00:00`;
-        const end2 = `${targetDate[i]} 23:59:59`;
-        
-        const startDateArray = [start1, start2];
-        const endDateArray = [end1, end2];
-        const signal = await setOrderChannel(targetDate[i], startDateArray, endDateArray);
-        await util.delayTime(1000);
-        console.log(signal);
-    }
+  for (let i = 0; i < targetDate.length; i++) {
+    const start1 = `${targetDate[i]} 00:00:00`;
+    const end1 = `${targetDate[i]} 11:59:59`;
+    const start2 = `${targetDate[i]} 12:00:00`;
+    const end2 = `${targetDate[i]} 23:59:59`;
+
+    const startDateArray = [start1, start2];
+    const endDateArray = [end1, end2];
+    const signal = await setOrderChannel(targetDate[i], startDateArray, endDateArray);
+    await util.delayTime(1000);
+    console.log(signal);
+  }
 }
 
 async function setOrderChannel(targetDate, startDateArray, endDateArray) {
-    const orderChannel = ["naverpay"]; //"shop", 
-    const orderStatus = ['o1','p1','g1','d1','d2','s1','c1','c2','c3','c4','b1','b2','b3','b4','e1','e2','e3','e4','e5','r1','r2','r3'];
+  const orderChannel = ["shop", "naverpay"];
+  const orderStatus = [
+    "o1",
+    "p1",
+    "g1",
+    "d1",
+    "d2",
+    "s1",
+    "c1",
+    "c2",
+    "c3",
+    "c4",
+    "b1",
+    "b2",
+    "b3",
+    "b4",
+    "e1",
+    "e2",
+    "e3",
+    "e4",
+    "e5",
+    "r1",
+    "r2",
+    "r3",
+  ];
 
-    for (let i = 0; i < orderChannel.length; i++) {
-        for (let j = 0; j < orderStatus.length; j++) {
-            for (let k = 0; k < startDateArray.length; k++) {
-                const d = await getOrderData(orderChannel[i], orderStatus[j], startDateArray[k], endDateArray[k]);
-                await util.delayTime(1000);
-                console.log(d);
-            }
-            await util.delayTime(1000);
-        }
+  for (let i = 0; i < orderChannel.length; i++) {
+    for (let j = 0; j < orderStatus.length; j++) {
+      for (let k = 0; k < startDateArray.length; k++) {
+        const d = await getOrderData(orderChannel[i], orderStatus[j], startDateArray[k], endDateArray[k]);
         await util.delayTime(1000);
-        console.log(targetDate + " / " + orderChannel[i] + " update complete");
+        console.log(d);
+      }
+      await util.delayTime(1000);
     }
-    return "complete"
+    await util.delayTime(1000);
+    console.log(targetDate + " / " + orderChannel[i] + " update complete");
+  }
+  return "complete";
 }
 
 async function getOrderData(channel, status, startDate, endDate) {
+  const paramDetail =
+    util.param.main_key +
+    "&" +
+    util.lib.qs.stringify({
+      dateType: "order",
+      startDate: startDate,
+      endDate: endDate,
+      orderChannel: channel,
+      orderStatus: status,
+    });
 
-    const paramDetail = util.param.main_key + "&" + util.lib.qs.stringify( {
-        dateType: 'order', 
-        startDate: startDate, 
-        endDate: endDate, 
-        orderChannel: channel,
-        orderStatus: status } );
+  const options = { method: "POST", url: `${util.param.main_url}/order/Order_Search.php?${paramDetail}` };
 
-    const options = { method: 'POST',
-        url: `${util.param.main_url}/order/Order_Search.php?${paramDetail}`
-    };
+  const xmlRowData = await util.requestData(options);
+  const jsonData = await util.parseXml(xmlRowData);
 
-    const xmlRowData = await util.xmlData(options);
-    const jsonData = await util.parseXml(xmlRowData);
-    
-    if(jsonData.data == undefined) {
-        return "header data error";
-    } else {
-        if(jsonData.data.header[0].code == '000') {
-            const orderData = jsonData.data.return[0].order_data;
-            if(orderData) {
-                for(let i = 0; i < orderData.length; i++) {
-                    console.log("update order count: ", i+1, "/", orderData.length);
-                    if(orderData[i].orderGoodsData === undefined) { return };
-                    console.log("update order goods count: ", orderData[i].orderGoodsData.length);
-                    
-                    const updateArray = orderData[i].orderGoodsData.map( 
-                        (s) => [ 
-                            s.sno[0], 
-                            s.orderNo[0], 
-                            orderData[i].orderDate[0], 
-                            s.paymentDt[0], 
-                            s.deliveryDt[0],
-                            s.goodsNo[0],
-                            s.optionSno[0], 
-                            Number(s.fixedPrice[0]), 
-                            (Number(s.goodsPrice[0]) + Number(s.optionPrice[0])), 
-                            Math.round(Number(s.goodsDcPrice[0]) / Number(s.goodsCnt[0])), 
-                            Number(s.goodsCnt[0]), 
-                            orderData[i].memId == undefined ? null : orderData[i].memId[0],
-                            s.orderStatus[0], 
-                            s.commission[0],
-                            (Number(s.divisionUseDeposit[0]) + Number(s.divisionGoodsDeliveryUseDeposit[0])),
-                            (Number(s.divisionUseMileage[0]) + Number(s.divisionGoodsDeliveryUseMileage[0])),
-                            (Number(s.divisionCouponOrderDcPrice[0]) + Number(s.memberDcPrice[0])),
-                            s.couponGoodsDcPrice[0],
-                            orderData[i].orderChannelFl[0],
-                            Number(orderData[i].settlePrice[0]),
-                            orderData[i].memGroupNm === undefined ? null : orderData[i].memGroupNm[0],
-                            orderData[i].firstSaleFl[0], 
-                        ] );
+  if (jsonData.data == undefined) {
+    return "header data error";
+  } else {
+    if (jsonData.data.header[0].code == "000") {
+      const orderData = jsonData.data.return[0].order_data;
+      if (orderData) {
+        for (let i = 0; i < orderData.length; i++) {
+          console.log("update order count: ", i + 1, "/", orderData.length);
+          if (orderData[i].orderGoodsData === undefined) {
+            return;
+          }
+          console.log("update order goods count: ", orderData[i].orderGoodsData.length);
 
-                    const insertOrderSql = `
+          const updateArray = orderData[i].orderGoodsData.map((s) => [
+            s.sno[0],
+            s.orderNo[0],
+            orderData[i].orderDate[0],
+            s.paymentDt[0],
+            s.deliveryDt[0],
+            s.goodsNo[0],
+            s.optionSno[0],
+            Number(s.fixedPrice[0]),
+            Number(s.goodsPrice[0]) + Number(s.optionPrice[0]),
+            Math.round(Number(s.goodsDcPrice[0]) / Number(s.goodsCnt[0])),
+            Number(s.goodsCnt[0]),
+            orderData[i].memId == undefined ? null : orderData[i].memId[0],
+            s.orderStatus[0],
+            s.commission[0],
+            Number(s.divisionUseDeposit[0]) + Number(s.divisionGoodsDeliveryUseDeposit[0]),
+            Number(s.divisionUseMileage[0]) + Number(s.divisionGoodsDeliveryUseMileage[0]),
+            Number(s.divisionCouponOrderDcPrice[0]) + Number(s.memberDcPrice[0]),
+            s.couponGoodsDcPrice[0],
+            orderData[i].orderChannelFl[0],
+            Number(orderData[i].settlePrice[0]),
+            orderData[i].memGroupNm === undefined ? null : orderData[i].memGroupNm[0],
+            orderData[i].firstSaleFl[0],
+          ]);
+
+          const insertOrderSql = `
                         INSERT INTO management.korea_orders 
                             (order_item_id 
                             , id
@@ -144,15 +169,15 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , payment_price=values(payment_price)
                             , user_group=values(user_group)
                             , is_first=values(is_first)`;
-                    
-                    util.param.db.query(insertOrderSql, [updateArray]);
-                    await util.delayTime(1000);
-                }
-                return channel + " / " + status + " / " + startDate + " update complete";
-            }
-        } else {
-            return channel + " / " + status + " / " + startDate + " Error";
+
+          util.param.db.query(insertOrderSql, [updateArray]);
+          await util.delayTime(1000);
         }
-        return channel + " / " + status + " / " + startDate + " No Data";
+        return channel + " / " + status + " / " + startDate + " update complete";
+      }
+    } else {
+      return channel + " / " + status + " / " + startDate + " Error";
     }
+    return channel + " / " + status + " / " + startDate + " No Data";
+  }
 }
