@@ -1,9 +1,14 @@
 "use strict";
 
+const schedule = require("node-schedule");
 const { DateTime } = require("luxon");
 const util = require("../data-center/utility.js");
 
-estimateTemperature();
+const getWeatherRule = new schedule.RecurrenceRule();
+getWeatherRule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
+getWeatherRule.hour = 9;
+getWeatherRule.minute = 10;
+schedule.scheduleJob("getWeather", getWeatherRule, () => estimateTemperature());
 
 async function estimateTemperature() {
   const targetDate = DateTime.now().toFormat("yyyyLLdd") + "0600";
