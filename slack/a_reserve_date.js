@@ -9,21 +9,21 @@ const util = require("../data-center/utility.js");
 const endDate = DateTime.now().toFormat("yyyy-LL-dd");
 const addParam = `scmNo=1&searchDateType=regDt&startDate=2022-08-12&endDate=${endDate}`;
 
-// const getProductRule = new schedule.RecurrenceRule();
-// getProductRule.dayOfWeek = [1, 2, 3, 4, 5];
-// getProductRule.hour = 8;
-// getProductRule.minute = 0;
-// schedule.scheduleJob("getExcel", getProductRule, function () {
-// getExcel();
-// });
+const getProductRule = new schedule.RecurrenceRule();
+getProductRule.dayOfWeek = [1, 2, 3, 4, 5];
+getProductRule.hour = 8;
+getProductRule.minute = 0;
+schedule.scheduleJob("getExcel", getProductRule, function () {
+  getExcel();
+});
 
-// const notiRule = new schedule.RecurrenceRule();
-// notiRule.dayOfWeek = [1, 2, 3, 4, 5];
-// notiRule.hour = 9;
-// notiRule.minute = 0;
-// schedule.scheduleJob("noti", notiRule, function () {
-notiSlack();
-// });
+const notiRule = new schedule.RecurrenceRule();
+notiRule.dayOfWeek = [1, 2, 3, 4, 5];
+notiRule.hour = 9;
+notiRule.minute = 0;
+schedule.scheduleJob("noti", notiRule, function () {
+  notiSlack();
+});
 
 async function getExcel() {
   const wb = new excel.Workbook();
@@ -178,7 +178,7 @@ async function getProduct(pageNo) {
 async function notiSlack() {
   if (fs.existsSync(__dirname + "/files/reserve_" + DateTime.now().toFormat("yyyyLLdd") + ".xlsx")) {
     try {
-      const result = await util.slackApp.client.files.uploadV2({
+      const result = await util.slackApp.client.files.upload({
         channels: "GQUJ3SB8S",
         initial_comment: `<@U01514WLEJV> <@US6E9DY66> <@U015JK6LXLK> *예약 배송일이 지났거나 임박한* 상품과 *옵션배송상태가 배송지연*으로 선택된 상품입니다.\n`,
         file: fs.createReadStream(__dirname + "/files/reserve_" + DateTime.now().toFormat("yyyyLLdd") + ".xlsx"),
