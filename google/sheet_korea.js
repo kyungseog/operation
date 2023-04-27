@@ -7,12 +7,12 @@ const { insertSql } = require("./insertSQL.js");
 
 const koreaSheetId = util.lib.sheetIds.koreaSheetId;
 
-const rateRange = "rate!A2:C10000";
-const supplierRange = "supplier!A2:N10000";
-const brandRange = "brand!A2:L10000";
-const customerRange = "customer!A2:G500000";
-const liveRange = "live!A2:I10000";
-const stockRange = "stock!A2:L20000";
+const rateRange = "rate!A2:C100000";
+const supplierRange = "supplier!A2:N100000";
+const brandRange = "brand!A2:L100000";
+const customerRange = "customer!A2:G5000000";
+const liveRange = "live!A2:I100000";
+const stockRange = "stock!A2:L200000";
 
 const client = new google.auth.JWT(keys.client_email, null, keys.private_key, [
   "https://www.googleapis.com/auth/spreadsheets",
