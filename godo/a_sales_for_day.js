@@ -5,8 +5,8 @@ const util = require("../data-center/utility.js");
 
 const rule = new util.lib.schedule.RecurrenceRule();
 rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
-rule.hour = 3;
-rule.minute = 30;
+rule.hour = 1;
+rule.minute = 0;
 
 util.lib.schedule.scheduleJob("sales", rule, () => start());
 

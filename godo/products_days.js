@@ -4,7 +4,7 @@ const util = require("../data-center/utility.js");
 
 (async function start() {
   let targetDate = [];
-  for (let i = 1; i <= 17; i++) {
+  for (let i = 20; i <= 30; i++) {
     let day = i < 10 ? "0" + i : i;
     targetDate.push("2023-04-" + day);
   }

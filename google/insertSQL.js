@@ -23,7 +23,7 @@ module.exports.insertSql = {
       , bank_name
       , bank_account
       , account_owner
-      , email
+      , account_email
       , status_id) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
@@ -38,7 +38,7 @@ module.exports.insertSql = {
       , bank_name=values(bank_name)
       , bank_account=values(bank_account)
       , account_owner=values(account_owner)
-      , email=values(email)
+      , account_email=values(account_email)
       , status_id=values(status_id)`,
 
   brands: `
@@ -51,6 +51,7 @@ module.exports.insertSql = {
       , squad
       , manager_id
       , supplier_id
+      , supplier_md_email
       , commission
       , created_at
       , deleted_at
@@ -64,6 +65,7 @@ module.exports.insertSql = {
       , squad=VALUES(squad)
       , manager_id=VALUES(manager_id)
       , supplier_id=VALUES(supplier_id)
+      , supplier_md_email=VALUES(supplier_md_email)
       , commission=VALUES(commission)
       , created_at=VALUES(created_at)
       , deleted_at=VALUES(deleted_at)

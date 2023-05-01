@@ -9,9 +9,8 @@ const koreaSheetId = util.lib.sheetIds.koreaSheetId;
 
 const rateRange = "rate!A2:C100000";
 const supplierRange = "supplier!A2:N100000";
-const brandRange = "brand!A2:L100000";
+const brandRange = "brand!A2:M100000";
 const customerRange = "customer!A2:G5000000";
-const liveRange = "live!A2:I100000";
 const stockRange = "stock!A2:L200000";
 
 const client = new google.auth.JWT(keys.client_email, null, keys.private_key, [
@@ -29,13 +28,12 @@ client.authorize(function (err, tokens) {
 });
 
 async function updateKoreaData(client) {
-  const updateName = ["rate", "supplier", "brand", "customer", "live", "stock"];
+  const updateName = ["rate", "supplier", "brand", "customer", "stock"];
   const updateArray = [
     [rateRange, insertSql.exchange_rate],
     [supplierRange, insertSql.suppliers],
     [brandRange, insertSql.brands],
     [customerRange, insertSql.korea_users],
-    [liveRange, insertSql.live_commerces],
     [stockRange, insertSql.stocks],
   ];
 
