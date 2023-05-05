@@ -41,7 +41,7 @@ async function getProduct(pageNo, startDate, endDate) {
     util.param.main_key +
     "&" +
     util.lib.qs.stringify({
-      searchDateType: "modDt",
+      searchDateType: "regDt",
       startDate: startDate,
       endDate: endDate,
       page: pageNo,

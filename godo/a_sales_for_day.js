@@ -32,7 +32,7 @@ async function start() {
 }
 
 async function setOrderChannel(targetDate, startDateArray, endDateArray) {
-  const orderChannel = ["naverpay"]; //"shop",
+  const orderChannel = ["shop", "naverpay"];
   const orderStatus = [
     "o1",
     "p1",
