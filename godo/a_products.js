@@ -25,7 +25,7 @@ async function getCount() {
 
   const options = { method: "POST", url: `${util.param.main_url}/goods/Goods_Search.php?${paramDetail}` };
 
-  const xmlRowData = await util.xmlData(options);
+  const xmlRowData = await util.requestData(options);
   const jsonData = await util.parseXml(xmlRowData);
   const pageCount = Number(jsonData.data.header[0].max_page[0]);
   console.log("total page count : ", pageCount);
@@ -49,7 +49,7 @@ async function getProduct(pageNo, startDate, endDate) {
 
   const options = { method: "POST", url: `${util.param.main_url}/goods/Goods_Search.php?${paramDetail}` };
 
-  const xmlRowData = await util.xmlData(options);
+  const xmlRowData = await util.requestData(options);
   const jsonData = await util.parseXml(xmlRowData);
   const goodsData = jsonData.data.return[0].goods_data;
   console.log("update product count: ", goodsData.length);

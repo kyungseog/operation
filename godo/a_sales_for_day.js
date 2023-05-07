@@ -87,7 +87,7 @@ async function getOrderData(channel, status, startDate, endDate) {
 
   const options = { method: "POST", url: `${util.param.main_url}/order/Order_Search.php?${paramDetail}` };
 
-  const xmlRowData = await util.xmlData(options);
+  const xmlRowData = await util.requestData(options);
   const jsonData = await util.parseXml(xmlRowData);
 
   if (jsonData.data == undefined) {
