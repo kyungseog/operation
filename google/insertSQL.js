@@ -14,7 +14,7 @@ module.exports.insertSql = {
       (id
       , integration_id
       , integration_name
-      , name
+      , supplier_name
       , ceo
       , registration_id
       , account_type
@@ -29,7 +29,7 @@ module.exports.insertSql = {
     ON DUPLICATE KEY UPDATE 
       integration_id=values(integration_id)
       , integration_name=values(integration_name)
-      , name=values(name)
+      , supplier_name=values(supplier_name)
       , ceo=values(ceo)
       , registration_id=values(registration_id)
       , account_type=values(account_type)
@@ -44,8 +44,8 @@ module.exports.insertSql = {
   brands: `
     INSERT INTO management.brands
       (id
-      , name
-      , type
+      , brand_name
+      , account_type
       , design_type
       , sales_country
       , squad
@@ -58,8 +58,8 @@ module.exports.insertSql = {
       , status_id) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
-      name=VALUES(name)
-      , type=VALUES(type)
+      brand_name=VALUES(brand_name)
+      , account_type=VALUES(account_type)
       , design_type=VALUES(design_type)
       , sales_country=VALUES(sales_country)
       , squad=VALUES(squad)
