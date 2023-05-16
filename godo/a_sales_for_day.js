@@ -6,7 +6,7 @@ const util = require("../data-center/utility.js");
 const rule = new util.lib.schedule.RecurrenceRule();
 rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
 rule.hour = 1;
-rule.minute = 0;
+rule.minute = 30;
 
 util.lib.schedule.scheduleJob("sales", rule, () => start());
 
@@ -152,8 +152,7 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , channel
                             , payment_price
                             , user_group
-                            , is_first
-                            , supplier_id)
+                            , is_first)
                         VALUES ?
                         ON DUPLICATE KEY UPDATE 
                             id=values(id)
@@ -176,8 +175,7 @@ async function getOrderData(channel, status, startDate, endDate) {
                             , channel=values(channel)
                             , payment_price=values(payment_price)
                             , user_group=values(user_group)
-                            , is_first=values(is_first)
-                            , supplier_id=values(supplier_id)`;
+                            , is_first=values(is_first)`;
 
           util.param.db.query(insertOrderSql, [updateArray]);
           await util.delayTime(1000);
