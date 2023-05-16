@@ -126,7 +126,6 @@ async function getOrderData(channel, status, startDate, endDate) {
             Number(orderData[i].settlePrice[0]),
             orderData[i].memGroupNm === undefined ? null : orderData[i].memGroupNm[0],
             orderData[i].firstSaleFl[0],
-            s.scmNo[0],
           ]);
 
           const insertOrderSql = `
