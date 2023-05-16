@@ -1,5 +1,6 @@
 "use strict";
 
+const { DateTime } = require("luxon");
 const util = require("./utility.js");
 
 updateMonthKoreaBrand();
@@ -27,8 +28,7 @@ async function updateMonthKoreaBrand() {
       LEFT JOIN management.costs e ON a.product_variant_id = e.product_variant_id 
     WHERE a.status_id IN ('p1', 'g1', 'd1', 'd2', 's1')
       AND a.user_id != 'mmzJapan'
-      AND YEAR(a.payment_date) = ? 
-      AND MONTH(a.payment_date) = ?
+      AND a.payment_date BETWEEN ? AND ?
     GROUP BY b.brand_id `;
 
   const directMarketingSql = `
@@ -41,8 +41,7 @@ async function updateMonthKoreaBrand() {
     FROM management.korea_marketing a
       LEFT JOIN management.brands b ON a.brand_id = b.id
       LEFT JOIN management.suppliers c ON b.supplier_id = c.id
-    WHERE YEAR(a.created_at) = ? 
-      AND MONTH(a.created_at) = ?
+    WHERE a.created_at BETWEEN ? AND ?
     GROUP BY a.brand_id`;
 
   const indirectMarketingSql = `
@@ -56,8 +55,7 @@ async function updateMonthKoreaBrand() {
       LEFT JOIN management.brands b ON a.brand_id = b.id
       LEFT JOIN management.suppliers c ON b.supplier_id = c.id
     WHERE a.account = 'marketing'
-      AND YEAR(a.created_at) = ? 
-      AND MONTH(a.created_at) = ?
+      AND a.created_at BETWEEN ? AND ?
     GROUP BY a.brand_id`;
 
   const logisticSql = `
@@ -71,18 +69,20 @@ async function updateMonthKoreaBrand() {
       LEFT JOIN management.brands b ON a.brand_id = b.id
       LEFT JOIN management.suppliers c ON b.supplier_id = c.id
     WHERE a.account = 'logistic'
-      AND YEAR(a.created_at) = ? 
-      AND MONTH(a.created_at) = ?
+      AND a.created_at BETWEEN ? AND ?
     GROUP BY a.brand_id`;
 
-  const YEAR = 2023;
-  const MONTH = 4;
+  const startDay = DateTime.now().toFormat("yyyy-LL-01");
+  const endDay = DateTime.now().toFormat("yyyy-LL-dd");
+  const payment_year = Number(DateTime.now().year);
+  const payment_month = Number(DateTime.now().month);
+  const payment_date = DateTime.now().toFormat("yyyy-LL-01");
 
   let uploadData = [];
-  const salesData = await util.sqlData(salesSql, [YEAR, MONTH]);
-  const directMarketingData = await util.sqlData(directMarketingSql, [YEAR, MONTH]);
-  const indirectMarketingData = await util.sqlData(indirectMarketingSql, [YEAR, MONTH]);
-  const logisticData = await util.sqlData(logisticSql, [YEAR, MONTH]);
+  const salesData = await util.sqlData(salesSql, [startDay, endDay]);
+  const directMarketingData = await util.sqlData(directMarketingSql, [startDay, endDay]);
+  const indirectMarketingData = await util.sqlData(indirectMarketingSql, [startDay, endDay]);
+  const logisticData = await util.sqlData(logisticSql, [startDay, endDay]);
 
   const salesBrands = salesData.map((r) => r.brand_id);
   const directMarketingBrands = directMarketingData.map((r) => r.brand_id);
@@ -100,9 +100,15 @@ async function updateMonthKoreaBrand() {
       const indirectMarketing = indirectMarketingData.filter((r) => r.brand_id == brand);
       const logistic = logisticData.filter((r) => r.brand_id == brand);
 
+      const direct_marketing_fee = directMarketing.length == 0 ? 0 : Number(directMarketing[0].direct_marketing_fee);
+      const indirect_marketing_fee =
+        indirectMarketing.length == 0 ? 0 : Number(indirectMarketing[0].indirect_marketing_fee);
+      const logistic_fee = logistic.length == 0 ? 0 : Number(logistic[0].logistic_fee);
+
       const dataObj = {
-        year: YEAR,
-        month: MONTH,
+        payment_year,
+        payment_month,
+        payment_date,
         brand_id: brand,
         brand_name: brandData[0].brand_name,
         account_type: brandData[0].account_type,
@@ -117,10 +123,26 @@ async function updateMonthKoreaBrand() {
         product_coupon: Number(brandData[0].product_coupon),
         mileage: Number(brandData[0].mileage),
         pg_fee: Number(brandData[0].pg_fee),
-        direct_marketing_fee: directMarketing.length == 0 ? 0 : Number(directMarketingData[0].direct_marketing_fee),
-        indirect_marketing_fee:
-          indirectMarketing.length == 0 ? 0 : Number(indirectMarketingData[0].indirect_marketing_fee),
-        logistic_fee: logistic.length == 0 ? 0 : Number(logisticData[0].logistic_fee),
+        direct_marketing_fee,
+        indirect_marketing_fee,
+        logistic_fee,
+        contribution_margin:
+          brandData[0].account_type == "consignment"
+            ? Number(brandData[0].commission) -
+              Number(brandData[0].order_coupon) -
+              Number(brandData[0].mileage) -
+              Number(brandData[0].pg_fee) -
+              direct_marketing_fee -
+              indirect_marketing_fee
+            : Number(brandData[0].sales) -
+              Number(brandData[0].cost) -
+              Number(brandData[0].product_coupon) -
+              Number(brandData[0].order_coupon) -
+              Number(brandData[0].mileage) -
+              Number(brandData[0].pg_fee) -
+              direct_marketing_fee -
+              indirect_marketing_fee -
+              logistic_fee,
       };
       uploadData.push(dataObj);
     } else if (directMarketingBrands.indexOf(brand) >= 0) {
@@ -128,9 +150,14 @@ async function updateMonthKoreaBrand() {
       const indirectMarketing = indirectMarketingData.filter((r) => r.brand_id == brand);
       const logistic = logisticData.filter((r) => r.brand_id == brand);
 
+      const indirect_marketing_fee =
+        indirectMarketing.length == 0 ? 0 : Number(indirectMarketing[0].indirect_marketing_fee);
+      const logistic_fee = logistic.length == 0 ? 0 : Number(logistic[0].logistic_fee);
+
       const dataObj = {
-        year: YEAR,
-        month: MONTH,
+        payment_year,
+        payment_month,
+        payment_date,
         brand_id: brand,
         brand_name: directMarketing[0].brand_name,
         account_type: directMarketing[0].account_type,
@@ -145,19 +172,23 @@ async function updateMonthKoreaBrand() {
         product_coupon: 0,
         mileage: 0,
         pg_fee: 0,
-        direct_marketing_fee: Number(directMarketingData[0].direct_marketing_fee),
-        indirect_marketing_fee:
-          indirectMarketing.length == 0 ? 0 : Number(indirectMarketingData[0].indirect_marketing_fee),
-        logistic_fee: logistic.length == 0 ? 0 : Number(logisticData[0].logistic_fee),
+        direct_marketing_fee: Number(directMarketing[0].direct_marketing_fee),
+        indirect_marketing_fee,
+        logistic_fee,
+        contribution_margin:
+          0 - Number(directMarketing[0].direct_marketing_fee) - indirect_marketing_fee - logistic_fee,
       };
       uploadData.push(dataObj);
     } else if (indirectMarketingBrands.indexOf(brand) >= 0) {
       const indirectMarketing = indirectMarketingData.filter((r) => r.brand_id == brand);
       const logistic = logisticData.filter((r) => r.brand_id == brand);
 
+      const logistic_fee = logistic.length == 0 ? 0 : Number(logistic[0].logistic_fee);
+
       const dataObj = {
-        year: YEAR,
-        month: MONTH,
+        payment_year,
+        payment_month,
+        payment_date,
         brand_id: brand,
         brand_name: indirectMarketing[0].brand_name,
         account_type: indirectMarketing[0].account_type,
@@ -173,16 +204,18 @@ async function updateMonthKoreaBrand() {
         mileage: 0,
         pg_fee: 0,
         direct_marketing_fee: 0,
-        indirect_marketing_fee: Number(indirectMarketingData[0].indirect_marketing_fee),
-        logistic_fee: logistic.length == 0 ? 0 : Number(logisticData[0].logistic_fee),
+        indirect_marketing_fee: Number(indirectMarketing[0].indirect_marketing_fee),
+        logistic_fee,
+        contribution_margin: 0 - Number(indirectMarketing[0].indirect_marketing_fee) - logistic_fee,
       };
       uploadData.push(dataObj);
     } else {
       const logistic = logisticData.filter((r) => r.brand_id == brand);
 
       const dataObj = {
-        year: YEAR,
-        month: MONTH,
+        payment_year,
+        payment_month,
+        payment_date,
         brand_id: brand,
         brand_name: logistic[0].brand_name,
         account_type: logistic[0].account_type,
@@ -199,7 +232,8 @@ async function updateMonthKoreaBrand() {
         pg_fee: 0,
         direct_marketing_fee: 0,
         indirect_marketing_fee: 0,
-        logistic_fee: Number(logisticData[0].logistic_fee),
+        logistic_fee: Number(logistic[0].logistic_fee),
+        contribution_margin: 0 - Number(logistic[0].logistic_fee),
       };
       uploadData.push(dataObj);
     }
@@ -207,10 +241,14 @@ async function updateMonthKoreaBrand() {
 
   for (let i = 0; i < uploadData.length; i++) {
     const updateSql = `
-    INSERT INTO management.month_korea_brand 
+    INSERT INTO management.month_korea_brands
     SET ?
     ON DUPLICATE KEY UPDATE 
-      order_count=values(order_count)
+    brand_name=values(brand_name)
+    , account_type=values(account_type)
+    , supplier_id=values(supplier_id)
+    , supplier_name=values(supplier_name)
+    , order_count=values(order_count)
     , quantity=values(quantity)
     , sales=values(sales) 
     , commission=values(commission) 
@@ -221,7 +259,8 @@ async function updateMonthKoreaBrand() {
     , pg_fee=values(pg_fee)
     , direct_marketing_fee=values(direct_marketing_fee)
     , indirect_marketing_fee=values(indirect_marketing_fee) 
-    , logistic_fee=values(logistic_fee)`;
+    , logistic_fee=values(logistic_fee)
+    , contribution_margin=values(contribution_margin)`;
 
     const result = await util.sqlData(updateSql, uploadData[i]);
     console.log(i + 1, uploadData.length);
