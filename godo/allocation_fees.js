@@ -31,8 +31,7 @@ async function allocationMarketingFees(createdAt) {
       (select SUM(a.cost) as indirect_marketing
       from management.korea_marketing a
         left join management.brands b on a.brand_id = b.id
-      where a.created_at = ?
-      and b.id is null) im
+      where a.created_at = ? AND c.supplier_id = '3') im
   where a.payment_date BETWEEN ? AND ?
     and a.status_id in ('p1', 'g1', 'd1', 'd2', 's1')
     and a.user_id != 'mmzjapan'
