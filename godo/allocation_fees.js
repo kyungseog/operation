@@ -5,9 +5,9 @@ const util = require("../data-center/utility.js");
 
 (async function start() {
   let targetDate = [];
-  for (let i = 1; i <= 20; i++) {
+  for (let i = 1; i <= 17; i++) {
     let day = i < 10 ? "0" + i : i;
-    targetDate.push("2023-04-" + day);
+    targetDate.push("2023-05-" + day);
   }
 
   for (let i = 0; i < targetDate.length; i++) {
@@ -21,21 +21,21 @@ const util = require("../data-center/utility.js");
 
 async function allocationMarketingFees(createdAt) {
   const getDailySalesByBrand = `
-  SELECT b.brand_id
-    , SUM((a.sale_price - a.discount_price) * a.quantity) as sales_price
+    SELECT b.brand_id
+      , SUM((a.sale_price - a.discount_price) * a.quantity) as sales_price
       , SUM((a.sale_price - a.discount_price) * a.quantity) * 100 / SUM(SUM((a.sale_price - a.discount_price) * a.quantity)) OVER() as ratio
       , ROUND(im.indirect_marketing * SUM((a.sale_price - a.discount_price) * a.quantity) / SUM(SUM((a.sale_price - a.discount_price) * a.quantity)) OVER()) as allocated_fee
-  FROM management.korea_orders a
-    left join management.products b on a.product_id = b.id
-    left join management.brands c on b.brand_id = c.id,
-      (select SUM(a.cost) as indirect_marketing
-      from management.korea_marketing a
-        left join management.brands b on a.brand_id = b.id
-      where a.created_at = ? AND c.supplier_id = '3') im
-  where a.payment_date BETWEEN ? AND ?
-    and a.status_id in ('p1', 'g1', 'd1', 'd2', 's1')
-    and a.user_id != 'mmzjapan'
-  group by b.brand_id`;
+    FROM management.korea_orders a
+      left join management.products b on a.product_id = b.id
+      left join management.brands c on b.brand_id = c.id,
+        (select SUM(a.cost) as indirect_marketing
+        from management.korea_marketing a
+          left join management.brands b on a.brand_id = b.id
+        where a.created_at = ? AND b.supplier_id = '3') im
+    where a.payment_date BETWEEN ? AND ?
+      and a.status_id in ('p1', 'g1', 'd1', 'd2', 's1')
+      and a.user_id != 'mmzjapan'
+    group by b.brand_id`;
 
   const salesDataByBrand = await util.sqlData(getDailySalesByBrand, [
     createdAt,
