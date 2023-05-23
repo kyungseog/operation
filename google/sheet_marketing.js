@@ -47,7 +47,7 @@ async function updateLiveData(client) {
 
   let filteredDataArray = dataArray.map((r) => [r[0], r[4], r[3], r[5], r[7], r[8], r[9], r[10], r[11]]);
 
-  util.param.db.query(insertSql.live_commerces, [filteredDataArray], function (error, result) {
-    error ? console.log(error) : console.log(`update live commerce data`);
+  util.param.db.query(insertSql.korea_lives, [filteredDataArray], function (error, result) {
+    error ? console.log(error) : console.log(`update korea lives data`);
   });
 }

@@ -5,7 +5,8 @@ const util = require("../data-center/utility.js");
 
 (async function start() {
   let targetDate = [];
-  for (let i = 1; i <= 17; i++) {
+  const days = DateTime.now().toFormat("dd");
+  for (let i = 1; i <= days; i++) {
     let day = i < 10 ? "0" + i : i;
     targetDate.push("2023-05-" + day);
   }

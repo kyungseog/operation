@@ -89,8 +89,8 @@ module.exports.insertSql = {
       , second_child_birthday=VALUES(second_child_birthday)
       , cellphone=VALUES(cellphone)`,
 
-  live_commerces: `
-    INSERT INTO management.live_commerces
+  korea_lives: `
+    INSERT INTO management.korea_lives
       (id
       , campaign_key
       , name
