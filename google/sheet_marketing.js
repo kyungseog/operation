@@ -15,7 +15,7 @@ client.authorize(function (err, tokens) {
     return;
   } else {
     console.log("GoogleSheet Connected!");
-    updateMarketingData(client);
+    // updateMarketingData(client);
     updateLiveData(client);
   }
 });
@@ -39,7 +39,7 @@ async function updateLiveData(client) {
   const gsapi = google.sheets({ version: "v4", auth: client });
   const options = {
     spreadsheetId: util.lib.sheetIds.marketingSheetId,
-    range: "live!A2:L100000",
+    range: "live!A2:L1000",
   };
 
   let datas = await gsapi.spreadsheets.values.get(options);
