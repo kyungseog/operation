@@ -23,7 +23,7 @@ async function updateCostData(client) {
   const gsapi = google.sheets({ version: "v4", auth: client });
   const options = {
     spreadsheetId: util.lib.sheetIds.costSheetId,
-    range: "db_upload!A2:D1000000",
+    range: "db_upload!A2:D300000",
   };
 
   let datas = await gsapi.spreadsheets.values.get(options);

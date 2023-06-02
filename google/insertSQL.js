@@ -93,7 +93,7 @@ module.exports.insertSql = {
     INSERT INTO management.korea_lives
       (id
       , campaign_key
-      , name
+      , live_name
       , brand_id
       , live_page_sno
       , brand_page_sno
@@ -103,7 +103,7 @@ module.exports.insertSql = {
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
       campaign_key=values(campaign_key)
-      , name=values(name)
+      , live_name=values(live_name)
       , brand_id=values(brand_id)
       , live_page_sno=values(live_page_sno)
       , brand_page_sno=values(brand_page_sno)

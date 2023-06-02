@@ -15,7 +15,7 @@ client.authorize(function (err, tokens) {
     return;
   } else {
     console.log("GoogleSheet Connected!");
-    // updateMarketingData(client);
+    updateMarketingData(client);
     updateLiveData(client);
   }
 });
