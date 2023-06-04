@@ -40,6 +40,7 @@ const sheetIds = {
   japanSheetId: process.env.JAPAN_SHEET_ID,
   marketingSheetId: process.env.MARKETING_SHEET_ID,
   costSheetId: process.env.COST_SHEET_ID,
+  essentialSheetId: process.env.ESSENTIAL_SHEET_ID,
 };
 
 module.exports.slackApp = new App({
