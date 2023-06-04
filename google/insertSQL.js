@@ -174,4 +174,32 @@ module.exports.insertSql = {
       , conversion=values(conversion)
       , brand_id=values(brand_id)
       , sno_no=values(sno_no)`,
+
+  product_essentials: `
+      INSERT INTO management.product_essentials
+        (product_id
+        , product_variant_id
+        , custom_variant_id
+        , variant_cost
+        , product_name
+        , bar_code
+        , unique_cost
+        , color
+        , size
+        , age
+        , category
+        , plan_year
+        , season) 
+      VALUES ? 
+      ON DUPLICATE KEY UPDATE 
+      custom_variant_id=values(custom_variant_id)
+        ,variant_cost=values(variant_cost)
+        ,product_name=values(product_name)
+        ,unique_cost=values(unique_cost)
+        ,color=values(color)
+        ,size=values(size)
+        ,age=values(age)
+        ,category=values(category)
+        ,plan_year=values(plan_year)
+        ,season=values(season)`,
 };
