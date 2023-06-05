@@ -15,21 +15,37 @@ client.authorize(function (err, tokens) {
     return;
   } else {
     console.log("GoogleSheet Connected!");
-    updateEssentialData(client);
+    updateEssentialSalesData(client);
+    updateEssentialProductionData(client);
   }
 });
 
-async function updateEssentialData(client) {
+async function updateEssentialSalesData(client) {
   const gsapi = google.sheets({ version: "v4", auth: client });
   const options = {
     spreadsheetId: util.lib.sheetIds.essentialSheetId,
-    range: "db_essential!A2:M9319",
+    range: "db_essential!A2:F9319",
   };
 
   let datas = await gsapi.spreadsheets.values.get(options);
   let dataArray = datas.data.values;
 
-  util.param.db.query(insertSql.product_essentials, [dataArray], function (error, result) {
-    error ? console.log(error) : console.log(`update essential data`);
+  util.param.db.query(insertSql.product_essentials_sales, [dataArray], function (error, result) {
+    error ? console.log(error) : console.log(`update essential sales data`);
+  });
+}
+
+async function updateEssentialProductionData(client) {
+  const gsapi = google.sheets({ version: "v4", auth: client });
+  const options = {
+    spreadsheetId: util.lib.sheetIds.essentialSheetId,
+    range: "production!A2:M20000",
+  };
+
+  let datas = await gsapi.spreadsheets.values.get(options);
+  let dataArray = datas.data.values;
+
+  util.param.db.query(insertSql.product_essentials_production, [dataArray], function (error, result) {
+    error ? console.log(error) : console.log(`update essential production data`);
   });
 }

@@ -175,31 +175,47 @@ module.exports.insertSql = {
       , brand_id=values(brand_id)
       , sno_no=values(sno_no)`,
 
-  product_essentials: `
-      INSERT INTO management.product_essentials
-        (product_id
-        , product_variant_id
+  product_essentials_sales: `
+    INSERT INTO management.product_essentials_sales
+      (product_id
+      , product_variant_id
+      , custom_variant_id
+      , variant_cost
+      , product_name
+      , barcode) 
+    VALUES ? 
+    ON DUPLICATE KEY UPDATE 
+    custom_variant_id=values(custom_variant_id)
+      ,variant_cost=values(variant_cost)
+      ,product_name=values(product_name)`,
+
+  product_essentials_production: `
+      INSERT INTO management.product_essentials_production
+        (barcode
         , custom_variant_id
-        , variant_cost
-        , product_name
-        , bar_code
-        , unique_cost
+        , custom_cost_id
+        , pre_cost
+        , post_cost
+        , in_quantity
         , color
         , size
         , age
         , category
         , plan_year
-        , season) 
+        , season
+        , material) 
       VALUES ? 
       ON DUPLICATE KEY UPDATE 
       custom_variant_id=values(custom_variant_id)
-        ,variant_cost=values(variant_cost)
-        ,product_name=values(product_name)
-        ,unique_cost=values(unique_cost)
+        ,custom_cost_id=values(custom_cost_id)
+        ,pre_cost=values(pre_cost)
+        ,post_cost=values(post_cost)
+        ,in_quantity=values(in_quantity)
         ,color=values(color)
         ,size=values(size)
         ,age=values(age)
         ,category=values(category)
         ,plan_year=values(plan_year)
-        ,season=values(season)`,
+        ,season=values(season)
+        ,material=values(material)`,
 };
