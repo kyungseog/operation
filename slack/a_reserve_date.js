@@ -112,7 +112,7 @@ async function getProduct(pageNo) {
 
       targetDate = DateTime.fromObject({ month: monthData, day: dayData }).toFormat("LLdd");
     }
-    return data != "" && targetDate <= DateTime.now().plus({ days: 1 }).toFormat("LLdd");
+    return data != "" && targetDate <= DateTime.now().plus({ days: 4 }).toFormat("LLdd");
   });
 
   let goodsDataArray;
@@ -180,7 +180,7 @@ async function notiSlack() {
     try {
       const result = await util.slackApp.client.files.upload({
         channels: "GQUJ3SB8S",
-        initial_comment: `<@U01514WLEJV> <@US6E9DY66> <@U015JK6LXLK> *예약 배송일이 지났거나 임박한* 상품과 *옵션배송상태가 배송지연*으로 선택된 상품입니다.\n`,
+        initial_comment: `<@US6E9DY66> <@U015JK6LXLK> <@U01UP606GV8> *예약 배송일이 지났거나 임박한* 상품과 *옵션배송상태가 배송지연*으로 선택된 상품입니다.\n`,
         file: fs.createReadStream(__dirname + "/files/reserve_" + DateTime.now().toFormat("yyyyLLdd") + ".xlsx"),
       });
       console.log(result);

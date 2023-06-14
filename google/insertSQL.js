@@ -203,7 +203,8 @@ module.exports.insertSql = {
         , category
         , plan_year
         , season
-        , material) 
+        , material
+        ,first_sale_date) 
       VALUES ? 
       ON DUPLICATE KEY UPDATE 
       custom_variant_id=values(custom_variant_id)
@@ -217,5 +218,6 @@ module.exports.insertSql = {
         ,category=values(category)
         ,plan_year=values(plan_year)
         ,season=values(season)
-        ,material=values(material)`,
+        ,material=values(material)
+        ,first_sale_date=values(first_sale_date)`,
 };

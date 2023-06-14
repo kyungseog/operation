@@ -39,7 +39,7 @@ async function updateEssentialProductionData(client) {
   const gsapi = google.sheets({ version: "v4", auth: client });
   const options = {
     spreadsheetId: util.lib.sheetIds.essentialSheetId,
-    range: "production!A2:M20000",
+    range: "production!A2:N20000",
   };
 
   let datas = await gsapi.spreadsheets.values.get(options);
