@@ -175,49 +175,70 @@ module.exports.insertSql = {
       , brand_id=values(brand_id)
       , sno_no=values(sno_no)`,
 
+  product_essentials_products: `
+    INSERT INTO management.product_essentials_products
+      (custom_product_id
+      , product_custom_name
+      , target
+      , category
+      , season
+      , material
+      , design
+      , gender
+      , style
+      , plan_year
+      , fixed_price
+      , sales_price
+      , first_sale_date) 
+    VALUES ? 
+    ON DUPLICATE KEY UPDATE 
+    product_custom_name=values(product_custom_name)
+      ,target=values(target)
+      ,category=values(category)
+      ,season=values(season)
+      ,material=values(material)
+      ,design=values(design)
+      ,gender=values(gender)
+      ,style=values(style)
+      ,plan_year=values(plan_year)
+      ,fixed_price=values(fixed_price)
+      ,sales_price=values(sales_price)
+      ,first_sale_date=values(first_sale_date)`,
+
   product_essentials_sales: `
     INSERT INTO management.product_essentials_sales
       (product_id
       , product_variant_id
       , custom_variant_id
       , variant_cost
-      , product_name
-      , barcode) 
+      , product_sales_name
+      , barcode
+      , custom_product_id) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
     custom_variant_id=values(custom_variant_id)
       ,variant_cost=values(variant_cost)
-      ,product_name=values(product_name)`,
+      ,product_sales_name=values(product_sales_name)
+      ,custom_product_id=values(custom_product_id)`,
 
-  product_essentials_production: `
-      INSERT INTO management.product_essentials_production
-        (barcode
-        , custom_variant_id
-        , custom_cost_id
-        , pre_cost
-        , post_cost
-        , in_quantity
-        , color
-        , size
-        , age
-        , category
-        , plan_year
-        , season
-        , material
-        ,first_sale_date) 
-      VALUES ? 
-      ON DUPLICATE KEY UPDATE 
-      custom_variant_id=values(custom_variant_id)
-        ,custom_cost_id=values(custom_cost_id)
-        ,pre_cost=values(pre_cost)
-        ,post_cost=values(post_cost)
-        ,in_quantity=values(in_quantity)
-        ,color=values(color)
-        ,size=values(size)
-        ,age=values(age)
-        ,category=values(category)
-        ,plan_year=values(plan_year)
-        ,season=values(season)
-        ,material=values(material)
-        ,first_sale_date=values(first_sale_date)`,
+  product_essentials_variants: `
+    INSERT INTO management.product_essentials_variants
+      (barcode
+      , custom_variant_id
+      , custom_cost_id
+      , custom_product_id
+      , pre_cost
+      , post_cost
+      , in_quantity
+      , color
+      , size) 
+    VALUES ? 
+    ON DUPLICATE KEY UPDATE 
+    custom_variant_id=values(custom_variant_id)
+      ,custom_product_id=values(custom_product_id)
+      ,pre_cost=values(pre_cost)
+      ,post_cost=values(post_cost)
+      ,in_quantity=values(in_quantity)
+      ,color=values(color)
+      ,size=values(size)`,
 };
