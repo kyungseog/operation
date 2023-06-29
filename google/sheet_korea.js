@@ -8,7 +8,7 @@ const { insertSql } = require("./insertSQL.js");
 const koreaSheetId = util.lib.sheetIds.koreaSheetId;
 
 const rateRange = "rate!A2:C100000";
-const supplierRange = "supplier!A2:N100000";
+const supplierRange = "supplier!A2:O100000";
 const brandRange = "brand!A2:M100000";
 const customerRange = "customer!A2:G5000000";
 const stockRange = "stock!A2:L200000";

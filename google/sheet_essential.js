@@ -17,9 +17,9 @@ client.authorize(function (err, tokens) {
   } else {
     console.log("GoogleSheet Connected!");
     const list = {
-      product_essentials_products: "products!A2:M20000",
-      product_essentials_variants: "variants!A2:I20000",
-      product_essentials_sales: "sales!A2:G14406",
+      product_essentials_products: "products!A2:L20000",
+      product_essentials_variants: "variants!A2:J20000",
+      product_essentials_sales: "sales!A2:G14907",
     };
     const keys = Object.keys(list);
     const values = Object.values(list);

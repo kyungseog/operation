@@ -24,6 +24,7 @@ module.exports.insertSql = {
       , bank_account
       , account_owner
       , account_email
+      , account_phone
       , status_id) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
@@ -39,6 +40,7 @@ module.exports.insertSql = {
       , bank_account=values(bank_account)
       , account_owner=values(account_owner)
       , account_email=values(account_email)
+      , account_phone=values(account_phone)
       , status_id=values(status_id)`,
 
   brands: `
@@ -46,7 +48,7 @@ module.exports.insertSql = {
       (id
       , brand_name
       , account_type
-      , design_type
+      , class_type
       , sales_country
       , squad
       , manager_id
@@ -60,7 +62,7 @@ module.exports.insertSql = {
     ON DUPLICATE KEY UPDATE 
       brand_name=VALUES(brand_name)
       , account_type=VALUES(account_type)
-      , design_type=VALUES(design_type)
+      , class_type=VALUES(class_type)
       , sales_country=VALUES(sales_country)
       , squad=VALUES(squad)
       , manager_id=VALUES(manager_id)
@@ -187,8 +189,7 @@ module.exports.insertSql = {
       , gender
       , style
       , plan_year
-      , fixed_price
-      , sales_price
+      , selling_price
       , first_sale_date) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
@@ -201,8 +202,7 @@ module.exports.insertSql = {
       ,gender=values(gender)
       ,style=values(style)
       ,plan_year=values(plan_year)
-      ,fixed_price=values(fixed_price)
-      ,sales_price=values(sales_price)
+      ,selling_price=values(selling_price)
       ,first_sale_date=values(first_sale_date)`,
 
   product_essentials_sales: `
