@@ -228,8 +228,9 @@ module.exports.insertSql = {
       , custom_cost_id
       , custom_product_id
       , pre_cost
+      , plan_quantity
       , post_cost
-      , in_quantity
+      , actual_quantity
       , color
       , size) 
     VALUES ? 
@@ -237,8 +238,9 @@ module.exports.insertSql = {
     custom_variant_id=values(custom_variant_id)
       ,custom_product_id=values(custom_product_id)
       ,pre_cost=values(pre_cost)
+      ,plan_quantity=values(plan_quantity)
       ,post_cost=values(post_cost)
-      ,in_quantity=values(in_quantity)
+      ,actual_quantity=values(actual_quantity)
       ,color=values(color)
       ,size=values(size)`,
 };
