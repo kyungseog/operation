@@ -57,7 +57,8 @@ module.exports.insertSql = {
       , commission
       , created_at
       , deleted_at
-      , status_id) 
+      , status_id
+      , profit_cell) 
     VALUES ? 
     ON DUPLICATE KEY UPDATE 
       brand_name=VALUES(brand_name)
@@ -71,7 +72,8 @@ module.exports.insertSql = {
       , commission=VALUES(commission)
       , created_at=VALUES(created_at)
       , deleted_at=VALUES(deleted_at)
-      , status_id=VALUES(status_id)`,
+      , status_id=VALUES(status_id)
+      , profit_cell=VALUES(profit_cell)`,
 
   korea_users: `
     INSERT INTO management.korea_users

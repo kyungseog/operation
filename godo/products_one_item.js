@@ -3,7 +3,7 @@
 const util = require("../data-center/utility.js");
 
 (async function start() {
-  let goodsNo = ["1000047785"];
+  let goodsNo = ["1000055635"];
 
   for (let i = 0; i < goodsNo.length; i++) {
     const d = await getProduct(goodsNo[i]);
