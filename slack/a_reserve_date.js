@@ -9,22 +9,22 @@ const util = require("../data-center/utility.js");
 const endDate = DateTime.now().toFormat("yyyy-LL-dd");
 const addParam = `scmNo=1&searchDateType=regDt&startDate=2022-08-12&endDate=${endDate}`;
 
-const getProductRule = new schedule.RecurrenceRule();
-getProductRule.dayOfWeek = [1, 2, 3, 4, 5];
-getProductRule.hour = 8;
-getProductRule.minute = 0;
-schedule.scheduleJob("getExcel", getProductRule, function () {
-  getExcel();
-});
+// const getProductRule = new schedule.RecurrenceRule();
+// getProductRule.dayOfWeek = [1, 2, 3, 4, 5];
+// getProductRule.hour = 8;
+// getProductRule.minute = 0;
+// schedule.scheduleJob("getExcel", getProductRule, function () {
+//   getExcel();
+// });
 
-const notiRule = new schedule.RecurrenceRule();
-notiRule.dayOfWeek = [1, 2, 3, 4, 5];
-notiRule.hour = 9;
-notiRule.minute = 0;
-schedule.scheduleJob("noti", notiRule, function () {
-  notiSlack();
-});
-
+// const notiRule = new schedule.RecurrenceRule();
+// notiRule.dayOfWeek = [1, 2, 3, 4, 5];
+// notiRule.hour = 9;
+// notiRule.minute = 0;
+// schedule.scheduleJob("noti", notiRule, function () {
+//   notiSlack();
+// });
+getProduct(1);
 async function getExcel() {
   const wb = new excel.Workbook();
   await wb.xlsx.readFile("./templates/notification_reserve_date_template.xlsx");
@@ -46,6 +46,13 @@ async function getExcel() {
     console.log(i + 1, "/", pageCount, " page update complete");
   }
 
+  //brandCd 데이터 추출하여 브랜드명 확인
+  const goodsBrands = [...new Set(goodsData.map((r) => r[1]))];
+  const optionsBrands = [...new Set(optionData.map((r) => r[1]))];
+
+  const goodsBrandNames = util.sqlData(`SELECT id, brand_name FROM management.brnads WHERE id IN ? `, goodsBrands);
+
+  //엑셀 작성 작업
   if (goodsData.length != 0) {
     const ws1 = wb.getWorksheet("data");
     const ws2 = wb.getWorksheet("option");
@@ -142,7 +149,7 @@ async function getProduct(pageNo) {
         purchaseNm: purchaseNm,
         goodsNm: goodsData[i].goodsNm[0],
       };
-      const delayData = option.filter((d) => d.optionDeliveryFl[0] == "t");
+      const delayData = option.filter((d) => d.optionDeliveryFl[0] == "t" || d.optionSellFl[0] == "t");
       if (delayData.length != 0) {
         let tempArray = delayData.map((obj) => Object.assign(obj, obj2));
         selectedOptionData.push(...tempArray);
