@@ -9,22 +9,22 @@ const util = require("../data-center/utility.js");
 const endDate = DateTime.now().toFormat("yyyy-LL-dd");
 const addParam = `scmNo=1&searchDateType=regDt&startDate=2022-08-12&endDate=${endDate}`;
 
-// const getProductRule = new schedule.RecurrenceRule();
-// getProductRule.dayOfWeek = [1, 2, 3, 4, 5];
-// getProductRule.hour = 8;
-// getProductRule.minute = 0;
-// schedule.scheduleJob("getExcel", getProductRule, function () {
-//   getExcel();
-// });
+const getProductRule = new schedule.RecurrenceRule();
+getProductRule.dayOfWeek = [1, 2, 3, 4, 5];
+getProductRule.hour = 8;
+getProductRule.minute = 0;
+schedule.scheduleJob("getExcel", getProductRule, function () {
+  getExcel();
+});
 
-// const notiRule = new schedule.RecurrenceRule();
-// notiRule.dayOfWeek = [1, 2, 3, 4, 5];
-// notiRule.hour = 9;
-// notiRule.minute = 0;
-// schedule.scheduleJob("noti", notiRule, function () {
-//   notiSlack();
-// });
-getProduct(1);
+const notiRule = new schedule.RecurrenceRule();
+notiRule.dayOfWeek = [1, 2, 3, 4, 5];
+notiRule.hour = 9;
+notiRule.minute = 0;
+schedule.scheduleJob("noti", notiRule, function () {
+  notiSlack();
+});
+
 async function getExcel() {
   const wb = new excel.Workbook();
   await wb.xlsx.readFile("./templates/notification_reserve_date_template.xlsx");
