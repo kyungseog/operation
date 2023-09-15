@@ -2,9 +2,11 @@ const util = require("../data-center/utility.js");
 const { google } = require("googleapis");
 const keys = require("../google/data.json");
 
-setInterval(() => {
-  getRefreshToken();
-}, 90 * 60 * 1000);
+const rule = new util.lib.schedule.RecurrenceRule();
+rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
+rule.minute = 30;
+
+util.lib.schedule.scheduleJob("refreshToken", rule, () => getRefreshToken());
 
 async function getRefreshToken() {
   const token = await util.sqlData(`SELECT refresh_token FROM i_cafe24auth`);

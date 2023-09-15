@@ -3,18 +3,18 @@
 const { DateTime } = require("luxon");
 const util = require("../data-center/utility.js");
 
-// const rule = new util.lib.schedule.RecurrenceRule();
-// rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
-// rule.hour = 8;
-// rule.minute = 0;
+const rule = new util.lib.schedule.RecurrenceRule();
+rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
+rule.hour = 8;
+rule.minute = 0;
 
-// util.lib.schedule.scheduleJob("getProductData", rule, () => getCount());
+util.lib.schedule.scheduleJob("getProductData", rule, () => getCount());
 
 getCount();
 
 async function getCount() {
-  const startDate = "2023-07-14"; // DateTime.now().minus({ days: 1 }).toFormat("yyyy-LL-dd");7
-  const endDate = "2023-07-14"; // DateTime.now().toFormat("yyyy-LL-dd");
+  const startDate = DateTime.now().minus({ days: 1 }).toFormat("yyyy-LL-dd");
+  const endDate = DateTime.now().toFormat("yyyy-LL-dd");
 
   const paramDetail =
     util.param.main_key +
