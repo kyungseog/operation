@@ -23,37 +23,41 @@ async function getRefreshToken() {
     body: payload,
     json: true,
   };
+
   const refreshData = await util.requestData(options);
-  util.sqlData("DELETE from i_cafe24auth");
-  console.log("delete complete...");
 
-  const refreshTokenDatas = [
-    refreshData.issued_at,
-    refreshData.access_token,
-    refreshData.expires_at,
-    refreshData.refresh_token,
-    refreshData.refresh_token_expires_at,
-  ];
+  if (refreshData) {
+    const refreshTokenDatas = [
+      refreshData.issued_at,
+      refreshData.access_token,
+      refreshData.expires_at,
+      refreshData.refresh_token,
+      refreshData.refresh_token_expires_at,
+    ];
 
-  util.sqlData(
-    `INSERT INTO i_cafe24auth (issued_at, access_token, expires_at, refresh_token, refresh_token_expires_at) VALUES (?)`,
-    [refreshTokenDatas]
-  );
+    util.sqlData("DELETE from i_cafe24auth");
+    console.log("delete complete...");
 
-  const client = new google.auth.JWT(keys.client_email, null, keys.private_key, [
-    "https://www.googleapis.com/auth/spreadsheets",
-  ]);
+    util.sqlData(
+      `INSERT INTO i_cafe24auth (issued_at, access_token, expires_at, refresh_token, refresh_token_expires_at) VALUES (?)`,
+      [refreshTokenDatas]
+    );
 
-  client.authorize(async function (err, tokens) {
-    if (err) return;
-    console.log("GoogleSheet Connected!");
-    const gsapi = google.sheets({ version: "v4", auth: client });
-    const options = {
-      spreadsheetId: util.lib.sheetIds.japanCheckSheetId,
-      range: "info!A2:E2",
-      valueInputOption: "USER_ENTERED",
-      resource: { values: [refreshTokenDatas] },
-    };
-    await gsapi.spreadsheets.values.update(options);
-  });
+    const client = new google.auth.JWT(keys.client_email, null, keys.private_key, [
+      "https://www.googleapis.com/auth/spreadsheets",
+    ]);
+
+    client.authorize(async function (err, tokens) {
+      if (err) return;
+      console.log("GoogleSheet Connected!");
+      const gsapi = google.sheets({ version: "v4", auth: client });
+      const options = {
+        spreadsheetId: util.lib.sheetIds.japanCheckSheetId,
+        range: "info!A2:E2",
+        valueInputOption: "USER_ENTERED",
+        resource: { values: [refreshTokenDatas] },
+      };
+      await gsapi.spreadsheets.values.update(options);
+    });
+  }
 }
