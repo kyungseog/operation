@@ -1,3 +1,5 @@
+"use strict";
+
 const util = require("../data-center/utility.js");
 const { google } = require("googleapis");
 const keys = require("../google/data.json");

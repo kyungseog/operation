@@ -1,6 +1,6 @@
 const util = require("../data-center/utility.js");
 
-const code = "mkfb6v8RKa0cvpflPSxjeQ"; //아래 url을 통해 얻게되는 code 값을 입력
+const code = "x1sOqxW4B9Xj6oGbhHef9K"; //아래 url을 통해 얻게되는 code 값을 입력
 const redirect_uri = "https://moomooz.co.kr";
 
 const payload = `grant_type=authorization_code&code=${code}&redirect_uri=${redirect_uri}`;

@@ -17,3 +17,12 @@ async function populateConversationStore() {
     console.error(error);
   }
 }
+
+async function userGroupList() {
+  try {
+    const result = await util.slackApp.client.usergroups.list();
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+}
