@@ -1,6 +1,8 @@
 "use strict";
 
 const util = require("../data-center/utility.js");
+const { google } = require("googleapis");
+const keys = require("../google/data.json");
 
 const ruleKR = new util.lib.schedule.RecurrenceRule();
 ruleKR.dayOfWeek = [1, 2, 3, 4, 5, 6];
@@ -78,6 +80,26 @@ async function updateProductKR() {
     }
     await util.delayTime(1000);
   }
+
+  const productNumberDatas = await util.sqlData("SELECT product_code, product_no FROM cmipdb.api_productdata");
+  const productNumbers = productNumberDatas.map((row) => [row.product_code, row.product_no]);
+
+  const client = new google.auth.JWT(keys.client_email, null, keys.private_key, [
+    "https://www.googleapis.com/auth/spreadsheets",
+  ]);
+
+  client.authorize(async function (err, tokens) {
+    if (err) return;
+    const gsapi = google.sheets({ version: "v4", auth: client });
+    const options = {
+      spreadsheetId: "1-yQ4Ezh9GgqnAlvEl1CAQgkvZIpF3Sls7lpPFUvpJgM",
+      range: "productNo!A2",
+      valueInputOption: "USER_ENTERED",
+      resource: { values: productNumbers },
+    };
+    await gsapi.spreadsheets.values.update(options);
+  });
+
   console.log("kr product data update complete");
 }
 
