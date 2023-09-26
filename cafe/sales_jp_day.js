@@ -3,12 +3,12 @@
 const util = require("../data-center/utility.js");
 const { DateTime } = require("luxon");
 
-// const rule0230 = new util.lib.schedule.RecurrenceRule();
-// rule0230.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
-// rule0230.hour = 2;
-// rule0230.minute = 30;
-// util.lib.schedule.scheduleJob("jpSalesDay", rule0230, () => updateOrdersMonthly());
-updateOrdersMonthly();
+const rule0230 = new util.lib.schedule.RecurrenceRule();
+rule0230.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
+rule0230.hour = 2;
+rule0230.minute = 30;
+util.lib.schedule.scheduleJob("jpSalesDay", rule0230, () => updateOrdersMonthly());
+
 async function updateOrdersMonthly() {
   const token = await util.sqlData(`SELECT access_token FROM i_cafe24auth`);
   const setHeaders = {
@@ -35,9 +35,9 @@ async function countOrders(setHeaders, targetDate) {
     headers: setHeaders,
   };
 
-  const resCountData = await util.requestData(countOptions);
+  const resCountData = JSON.parse(await util.requestData(countOptions));
   const orderCount = resCountData.count;
-  console.log(resCountData);
+
   if (orderCount !== 0) {
     if (orderCount % 500 == 0) {
       for (let j = 1; j < orderCount / 500 + 1; j++) {
@@ -60,7 +60,7 @@ async function updateDatas(setHeaders, targetDate, j) {
     headers: setHeaders,
   };
 
-  const resOrderData = await util.requestData(orderOptions);
+  const resOrderData = JSON.parse(await util.requestData(orderOptions));
   let ordersArray = resOrderData.orders;
 
   let orderDataArray = [];

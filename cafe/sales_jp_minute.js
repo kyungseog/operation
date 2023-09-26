@@ -29,19 +29,19 @@ async function controlOrderUpdate() {
     for (let i = 0; i < day; i++) {
       const targetDate = DateTime.now().minus({ days: i }).toFormat("yyyy-LL-dd");
       await countOrders(setHeaders, targetDate);
-      util.delayTime(4000);
+      await util.delayTime(4000);
     }
     console.log(DateTime.now().toFormat("yyyy-LL-dd HH:mm:ss"), "jp order data update complete");
   } else {
     for (let i = 0; i < 16; i++) {
       const targetDate = DateTime.now().minus({ days: i }).toFormat("yyyy-LL-dd");
       await countOrders(setHeaders, targetDate);
-      util.delayTime(4000);
+      await util.delayTime(4000);
     }
     for (let i = 16; i < day; i++) {
       const targetDate = DateTime.now().minus({ days: i }).toFormat("yyyy-LL-dd");
       await countOrders(setHeaders, targetDate);
-      util.delayTime(4000);
+      await util.delayTime(4000);
     }
     console.log(DateTime.now().toFormat("yyyy-LL-dd HH:mm:ss"), "jp order data update complete");
   }
@@ -54,7 +54,7 @@ async function countOrders(setHeaders, targetDate) {
     headers: setHeaders,
   };
 
-  const resCountData = await util.requestData(countOptions);
+  const resCountData = JSON.parse(await util.requestData(countOptions));
   const orderCount = resCountData.count;
 
   if (orderCount !== 0) {
@@ -79,7 +79,7 @@ async function updateDatas(setHeaders, targetDate, j) {
     headers: setHeaders,
   };
 
-  const resOrderData = await util.requestData(orderOptions);
+  const resOrderData = JSON.parse(await util.requestData(orderOptions));
   let ordersArray = resOrderData.orders;
 
   let orderDataArray = [];

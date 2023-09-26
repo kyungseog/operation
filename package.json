@@ -19,6 +19,7 @@
   "dependencies": {
     "@google-analytics/data": "^3.2.1",
     "@google-cloud/local-auth": "^2.1.0",
+    "@google-cloud/translate": "^8.0.2",
     "@slack/bolt": "^3.12.2",
     "dotenv": "^16.0.3",
     "exceljs": "^4.3.0",

@@ -1,7 +1,6 @@
 "use strict";
 
 const util = require("../data-center/utility.js");
-const { DateTime } = require("luxon");
 
 const ruleKR = new util.lib.schedule.RecurrenceRule();
 ruleKR.dayOfWeek = [1, 2, 3, 4, 5, 6];
@@ -27,7 +26,7 @@ async function updateProductKR() {
     headers: setHeaders,
   };
 
-  const resCountData = await util.requestData(countOptions);
+  const resCountData = JSON.parse(await util.requestData(countOptions));
   const latestProductNo = resCountData.count + 100000;
 
   const fieldData =
@@ -42,7 +41,7 @@ async function updateProductKR() {
       }&fields=${fieldData}&limit=100`,
       headers: setHeaders,
     };
-    const resProductData = await util.requestData(productOptions);
+    const resProductData = JSON.parse(await util.requestData(productOptions));
     const productsArray = resProductData.products;
 
     if (productsArray != undefined) {
@@ -77,7 +76,7 @@ async function updateProductKR() {
 
       util.sqlData(productDataSql, [productDataArray]);
     }
-    util.delayTime(1000);
+    await util.delayTime(1000);
   }
   console.log("kr product data update complete");
 }
@@ -95,7 +94,7 @@ async function updateProductJP() {
     headers: setHeaders,
   };
 
-  const resCountData = await util.requestData(countOptions);
+  const resCountData = JSON.parse(await util.requestData(countOptions));
   const latestProductNo = resCountData.count + 100000;
 
   const fieldData =
@@ -111,7 +110,7 @@ async function updateProductJP() {
       headers: setHeaders,
     };
 
-    const resProductData = await util.requestData(productOptions);
+    const resProductData = JSON.parse(await util.requestData(productOptions));
     const productsArray = resProductData.products;
 
     if (productsArray != undefined) {
@@ -155,7 +154,7 @@ async function updateProductJP() {
 
       util.sqlData(productDataSql, [productDataArray]);
     }
-    util.delayTime(1000);
+    await util.delayTime(1000);
   }
   console.log("jp product data update complete");
 }

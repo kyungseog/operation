@@ -1,32 +1,27 @@
 "use strict";
 
-const schedule = require("node-schedule");
-const { DateTime } = require("luxon");
 const util = require("../data-center/utility.js");
+const { DateTime } = require("luxon");
 const excel = require("exceljs");
 const fs = require("fs");
 
-const productNotiRule = new schedule.RecurrenceRule();
+const productNotiRule = new util.lib.schedule.RecurrenceRule();
 productNotiRule.dayOfWeek = [1, 2, 3, 4, 5];
 productNotiRule.hour = 9;
 productNotiRule.minute = 0;
-schedule.scheduleJob("moomoozJapanProductNoti", productNotiRule, function () {
-  productNoti();
-});
+util.lib.schedule.scheduleJob("productNoti", productNotiRule, () => productNoti());
 
-const deliveryNotiRule = new schedule.RecurrenceRule();
+const deliveryNotiRule = new util.lib.schedule.RecurrenceRule();
 deliveryNotiRule.dayOfWeek = [1, 2, 3, 4, 5];
 deliveryNotiRule.hour = 11;
 deliveryNotiRule.minute = 0;
-schedule.scheduleJob("moomoozJapanDeliveryNoti", deliveryNotiRule, function () {
-  deliveryNoti();
-});
+util.lib.schedule.scheduleJob("deliveryNoti", deliveryNotiRule, () => deliveryNoti());
 
 async function productNoti() {
   const wb = new excel.Workbook();
-  await wb.xlsx.readFile("./templete/noti_template.xlsx");
+  await wb.xlsx.readFile("./templates/noti_template.xlsx");
 
-  const productNameErrorData = await ctrl.process.getSql(`
+  const productNameErrorData = await util.sqlData(`
     SELECT b.supplier_name, c.brand_name, a.product_no, a.product_name
     FROM cmipdb.api_productdata_jp a 
       LEFT JOIN cmipdb.i_suppliercode b USING(supplier_code) 
@@ -46,7 +41,7 @@ async function productNoti() {
     ws1.insertRows(2, productNameErrorData);
   }
 
-  const shortageInfoData = await ctrl.process.getSql(
+  const shortageInfoData = await util.sqlData(
     `SELECT b.supplier_name, c.brand_name, a.product_no, a.product_code, 
     d.product_name AS product_name_kr, a.product_name AS product_name_jp,
       a.hscode, a.clearance_category_kor, a.clearance_category_code, 
@@ -112,7 +107,7 @@ async function productNoti() {
     ws3.insertRows(2, variantNameErrorData);
   }
 
-  const variantErrorData = await ctrl.process.getSql(`
+  const variantErrorData = await util.sqlData(`
     SELECT a.product_no, c.supplier_name, b.product_name, 
       a.variant_code, a.display, a.selling, a.kr_display, 
       a.kr_selling, a.quantity
@@ -142,13 +137,13 @@ async function productNoti() {
     await wb.xlsx.writeFile(`./files/noti_${DateTime.now().toFormat("yyyyMMdd")}.xlsx`);
 
     const initialComment = `<@U01CCJMREDT> <@U022RVD4AF2> <@U02UTEG8H7Z> <@U031P740VU4> <@U03170TR1HD> *일본몰 등록 상품 및 옵션의 확인이 필요한 내역입니다.*\n`;
-    const fileName = "noti_" + DateTime.now().toFormat("yyyyMMdd") + ".xlsx";
+    const fileName = "noti_" + DateTime.now().toFormat("yyyyLLdd") + ".xlsx";
     notiPublicSlack(initialComment, fileName);
   }
 }
 
 async function deliveryNoti() {
-  const deliveryErrorRowData = await ctrl.process.getSql(`
+  const deliveryErrorRowData = await util.sqlData(`
     SELECT week(a.payment_date,7) AS weeks, DATE(a.payment_date) AS payment_date, a.order_id, a.tracking_no,
       DATEDIFF(d.local_delivery_end,a.payment_date) AS delivery_to_payment,
       DATEDIFF(a.shipped_date,a.payment_date) AS shipped_to_payment,
@@ -201,10 +196,10 @@ async function deliveryNoti() {
     ];
 
     ws.insertRows(2, deliveryErrorData);
-    await wb.xlsx.writeFile(`./files/deliveryError_${DateTime.now().toFormat("yyyy-MM-dd")}.xlsx`);
+    await wb.xlsx.writeFile(`./files/deliveryError_${DateTime.now().toFormat("yyyy-LL-dd")}.xlsx`);
 
     const deliveryInitialComment = `<@UKMPMN57D> <@U02FPGCLG2F> *주문 후 배송관련 확인이 필요한 주문내역입니다*\n아래 파일을 참고하세요\n`;
-    const deliveryErrorFileName = "deliveryError_" + DateTime.now().toFormat("yyyy-MM-dd") + ".xlsx";
+    const deliveryErrorFileName = "deliveryError_" + DateTime.now().toFormat("yyyy-LL-dd") + ".xlsx";
     notiSlack(deliveryInitialComment, deliveryErrorFileName);
   }
 }
