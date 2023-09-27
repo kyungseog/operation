@@ -78,7 +78,7 @@ async function productNoti() {
     ws2.insertRows(2, shortageInfoData);
   }
 
-  const variantNameErrorData = await ctrl.process.getSql(
+  const variantNameErrorData = await util.sqlData(
     `SELECT c.supplier_name, d.brand_name, 
       a.product_no, a.variant_code, 
       a.option_value_first, a.option_value_second
@@ -136,7 +136,7 @@ async function productNoti() {
     ws4.insertRows(2, variantErrorData);
     await wb.xlsx.writeFile(`./files/noti_${DateTime.now().toFormat("yyyyMMdd")}.xlsx`);
 
-    const initialComment = `<@U01CCJMREDT> <@U022RVD4AF2> <@U02UTEG8H7Z> <@U031P740VU4> <@U03170TR1HD> *일본몰 등록 상품 및 옵션의 확인이 필요한 내역입니다.*\n`;
+    const initialComment = `<@U022RVD4AF2> <@U02UTEG8H7Z> <@U031P740VU4> <@U03170TR1HD> *일본몰 등록 상품 및 옵션의 확인이 필요한 내역입니다.*\n`;
     const fileName = "noti_" + DateTime.now().toFormat("yyyyLLdd") + ".xlsx";
     notiPublicSlack(initialComment, fileName);
   }
@@ -177,7 +177,7 @@ async function deliveryNoti() {
 
   if (!(deliveryErrorData == undefined || deliveryErrorData == null || deliveryErrorData.length == 0)) {
     const wb = new excel.Workbook();
-    await wb.xlsx.readFile("./templete/배송오류통보양식.xlsx");
+    await wb.xlsx.readFile("./templates/배송오류통보양식.xlsx");
     const ws = wb.getWorksheet("data");
 
     ws.columns = [
@@ -207,7 +207,7 @@ async function deliveryNoti() {
 //무무즈재팬 채널 : C024JR3QWHF , 테스트시 이용하는 daily_report 채널 : C01GTUVCVAR, 무무즈-전담매니저 채널: C03EB4FU4CB
 async function notiSlack(initialComment, fileName) {
   try {
-    const result = await app.client.files.upload({
+    const result = await util.slackApp.client.files.upload({
       channels: "C024JR3QWHF",
       initial_comment: initialComment,
       file: fs.createReadStream(__dirname + "/files/" + fileName),
@@ -220,7 +220,7 @@ async function notiSlack(initialComment, fileName) {
 
 async function notiPublicSlack(initialComment, fileName) {
   try {
-    const result = await app.client.files.upload({
+    const result = await util.slackApp.client.files.upload({
       channels: "C03EB4FU4CB",
       initial_comment: initialComment,
       file: fs.createReadStream(__dirname + "/files/" + fileName),

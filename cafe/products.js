@@ -6,12 +6,14 @@ const keys = require("../google/data.json");
 
 const ruleKR = new util.lib.schedule.RecurrenceRule();
 ruleKR.dayOfWeek = [1, 2, 3, 4, 5, 6];
+ruleKR.hour = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23];
 ruleKR.minute = 20;
 util.lib.schedule.scheduleJob("productsKR", ruleKR, () => updateProductKR());
 
 const ruleJP = new util.lib.schedule.RecurrenceRule();
 ruleJP.dayOfWeek = [1, 2, 3, 4, 5, 6];
-ruleJP.minute = 50;
+ruleJP.hour = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+ruleJP.minute = 20;
 util.lib.schedule.scheduleJob("productsJP", ruleJP, () => updateProductJP());
 
 async function updateProductKR() {
