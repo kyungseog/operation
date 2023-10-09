@@ -4,13 +4,10 @@ const schedule = require("node-schedule");
 const { DateTime } = require("luxon");
 const util = require("../data-center/utility.js");
 
-const notiRule = new schedule.RecurrenceRule();
-notiRule.dayOfWeek = [1, 2, 3, 4, 5];
+const notiRule = new util.lib.schedule.RecurrenceRule();
 notiRule.hour = 15;
 notiRule.minute = 0;
-schedule.scheduleJob("noti", notiRule, function () {
-  notiOrderQuantity();
-});
+util.lib.schedule.scheduleJob("notiOrderQuantity", notiRule, () => notiOrderQuantity());
 
 //물류센터-팀공유 채널 번호 C01VA4QAM7F, logistic 담당자 그룹 S01FPTRM680
 async function notiOrderQuantity() {
@@ -50,13 +47,13 @@ async function notiOrderQuantity() {
     yesterdayGap > 0
       ? `${yesterdayGap.toLocaleString("ko-kr")}장 증가`
       : `${(yesterdayGap * -1).toLocaleString("ko-kr")}장 감소`;
-  const mainText = `<@U04QQK1K673> <@UKMPMN57D> *알뜰배송 오늘 (새벽 3시 - 오후 3시까지) 매출 현황*\n\n 
-    [ 세부내역 ] \n *주문수 : ${Number(todayResponse[todayResponse.length - 1].count_orders).toLocaleString(
-      "ko-kr"
-    )}개,  
-    판매수량 : ${Number(todayResponse[todayResponse.length - 1].quantity).toLocaleString(
-      "ko-kr"
-    )}장* (어제대비 ${gapText})`;
+  const mainText = `
+  <@U04QQK1K673> <@UKMPMN57D> *알뜰배송 오늘 (새벽 3시 - 오후 3시까지) 매출 현황*\n
+  [ 세부내역 ]\n 주문수 : ${Number(todayResponse[todayResponse.length - 1].count_orders).toLocaleString(
+    "ko-kr"
+  )}개, 판매수량 : ${Number(todayResponse[todayResponse.length - 1].quantity).toLocaleString(
+    "ko-kr"
+  )}장 (어제대비 ${gapText})`;
   const subText = todayDatas.join("\n");
 
   try {

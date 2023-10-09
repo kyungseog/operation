@@ -6,9 +6,9 @@ start();
 
 async function start() {
   let targetDate = [];
-  for (let i = 25; i <= 31; i++) {
+  for (let i = 20; i <= 24; i++) {
     let day = i < 10 ? "0" + i : i;
-    targetDate.push("2023-05-" + day);
+    targetDate.push("2023-09-" + day);
   }
 
   for (let i = 0; i < targetDate.length; i++) {
