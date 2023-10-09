@@ -4,30 +4,22 @@ const { DateTime } = require("luxon");
 const util = require("../data-center/utility.js");
 
 const rule = new util.lib.schedule.RecurrenceRule();
-rule.hour = 1;
 rule.minute = 40;
 
 util.lib.schedule.scheduleJob("sales", rule, () => start());
 
 async function start() {
-  let targetDate = [];
-  for (let i = 1; i <= 20; i++) {
-    let target = DateTime.now().minus({ days: i }).toFormat("yyyy-LL-dd");
-    targetDate.push(target);
-  }
+  let hourData = Number(DateTime.now().toFormat("H"));
+  let targetDate = DateTime.now().minus({ days: hourData }).toFormat("yyyy-LL-dd");
+  const start1 = `${targetDate} 00:00:00`;
+  const end1 = `${targetDate} 11:59:59`;
+  const start2 = `${targetDate} 12:00:00`;
+  const end2 = `${targetDate} 23:59:59`;
 
-  for (let i = 0; i < targetDate.length; i++) {
-    const start1 = `${targetDate[i]} 00:00:00`;
-    const end1 = `${targetDate[i]} 11:59:59`;
-    const start2 = `${targetDate[i]} 12:00:00`;
-    const end2 = `${targetDate[i]} 23:59:59`;
-
-    const startDateArray = [start1, start2];
-    const endDateArray = [end1, end2];
-    const signal = await setOrderChannel(targetDate[i], startDateArray, endDateArray);
-    await util.delayTime(1000);
-    console.log(signal);
-  }
+  const startDateArray = [start1, start2];
+  const endDateArray = [end1, end2];
+  const signal = await setOrderChannel(targetDate, startDateArray, endDateArray);
+  console.log(signal);
 }
 
 async function setOrderChannel(targetDate, startDateArray, endDateArray) {
