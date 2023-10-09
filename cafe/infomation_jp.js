@@ -1,5 +1,6 @@
 "use strict";
 
+const request = require("request");
 const { google } = require("googleapis");
 const JSONbigString = require("json-bigint")({ storeAsString: true });
 const keys = require("../google/data.json");
@@ -13,7 +14,6 @@ updateDeliveriesRule.minute = 0;
 util.lib.schedule.scheduleJob("updateDeliveries", updateDeliveriesRule, () => updateDeliveries());
 
 const updateCouponRule = new util.lib.schedule.RecurrenceRule();
-updateCouponRule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
 updateCouponRule.hour = 22;
 updateCouponRule.minute = 1;
 util.lib.schedule.scheduleJob("updateCoupon", updateCouponRule, () => updateCouponData());
