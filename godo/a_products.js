@@ -124,6 +124,7 @@ async function getProduct(pageNo, startDate, endDate) {
             Number(s.optionPrice[0]),
             s.modDt[0] == "" ? null : s.modDt[0],
             s.cafe24OptionCode[0] == "" ? null : s.cafe24OptionCode[0],
+            s.optionMemo[0] == "" ? null : s.optionMemo[0],
           ];
 
           const insertoptionSql = `
@@ -137,7 +138,8 @@ async function getProduct(pageNo, startDate, endDate) {
                 , product_id
                 , option_price
                 , updated_at
-                , cafe_variant_code) 
+                , cafe_variant_code
+                , option_memo) 
             VALUES (?)
             ON DUPLICATE KEY UPDATE 
                 custom_variant_id=values(custom_variant_id)
@@ -148,7 +150,8 @@ async function getProduct(pageNo, startDate, endDate) {
                 , product_id=values(product_id)
                 , option_price=values(option_price)
                 , updated_at=values(updated_at)
-                            , cafe_variant_code=values(cafe_variant_code)`;
+                , cafe_variant_code=values(cafe_variant_code)
+                , option_memo=values(option_memo)`;
 
           conn.query(insertoptionSql, [optionData]);
         }

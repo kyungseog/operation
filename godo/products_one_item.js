@@ -3,7 +3,7 @@
 const util = require("../data-center/utility.js");
 
 (async function start() {
-  let goodsNo = ["1000063784", "1000063791", "1000064132", "1000064162", "1000064325", "1000066716", "1000066877"];
+  let goodsNo = ["1000012447"];
 
   for (let i = 0; i < goodsNo.length; i++) {
     const d = await getProduct(goodsNo[i]);
@@ -98,6 +98,7 @@ async function getProduct(goodsNo) {
           Number(s.optionPrice[0]),
           s.modDt[0] == "" ? null : s.modDt[0],
           s.cafe24OptionCode[0] == "" ? null : s.cafe24OptionCode[0],
+          s.optionMemo[0] == "" ? null : s.optionMemo[0],
         ];
 
         const insertoptionSql = `
@@ -111,7 +112,8 @@ async function getProduct(goodsNo) {
                         , product_id
                         , option_price
                         , updated_at
-                        , cafe_variant_code) 
+                        , cafe_variant_code
+                        , option_memo) 
                     VALUES (?)
                     ON DUPLICATE KEY UPDATE 
                         custom_variant_id=values(custom_variant_id)
@@ -122,7 +124,8 @@ async function getProduct(goodsNo) {
                         , product_id=values(product_id)
                         , option_price=values(option_price)
                         , updated_at=values(updated_at)
-                        , cafe_variant_code=values(cafe_variant_code)`;
+                        , cafe_variant_code=values(cafe_variant_code)
+                        , option_memo=values(option_memo)`;
 
         util.param.db.query(insertoptionSql, [optionData]);
         await util.delayTime(500);
