@@ -13,7 +13,7 @@ util.lib.schedule.scheduleJob("notiOrderQuantity", notiRule, () => notiOrderQuan
 async function notiOrderQuantity() {
   const yesterday = DateTime.now().minus({ days: 1 }).toFormat("yyyy-LL-dd");
   const today = DateTime.now().toFormat("yyyy-LL-dd");
-  const brandLists = '"B0000CZU","B0000DCM","B0000DGS","B0000DGT","B0000EVE","B0000DFV","B0000CAT","B0000EPN"';
+  const brandLists = '"B0000CZU","B0000DCM","B0000DGS","B0000DGT","B0000EVE","B0000CAT","B0000EPN"';
 
   const yesterdayResponse = await util.sqlData(`
     SELECT COUNT(DISTINCT(a.id)) as count_orders, SUM(a.quantity) as quantity 
@@ -48,7 +48,7 @@ async function notiOrderQuantity() {
       ? `${yesterdayGap.toLocaleString("ko-kr")}장 증가`
       : `${(yesterdayGap * -1).toLocaleString("ko-kr")}장 감소`;
   const mainText = `
-  <@U04QQK1K673> <@UKMPMN57D> *알뜰배송 오늘 (새벽 3시 - 오후 3시까지) 매출 현황*\n
+  <@UKMPMN57D> *알뜰배송 오늘 (새벽 3시 - 오후 3시까지) 매출 현황*\n
   [ 세부내역 ]\n 주문수 : ${Number(todayResponse[todayResponse.length - 1].count_orders).toLocaleString(
     "ko-kr"
   )}개, 판매수량 : ${Number(todayResponse[todayResponse.length - 1].quantity).toLocaleString(

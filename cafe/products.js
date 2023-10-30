@@ -6,15 +6,17 @@ const keys = require("../google/data.json");
 
 const ruleKR = new util.lib.schedule.RecurrenceRule();
 ruleKR.dayOfWeek = [1, 2, 3, 4, 5, 6];
-ruleKR.hour = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23];
+ruleKR.hour = 6;
 ruleKR.minute = 20;
 util.lib.schedule.scheduleJob("productsKR", ruleKR, () => updateProductKR());
 
 const ruleJP = new util.lib.schedule.RecurrenceRule();
 ruleJP.dayOfWeek = [1, 2, 3, 4, 5, 6];
-ruleJP.hour = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+ruleJP.hour = 7;
 ruleJP.minute = 20;
 util.lib.schedule.scheduleJob("productsJP", ruleJP, () => updateProductJP());
+
+const STARTNUMBER = 950; //950 * 100번의 상품번호 이후 상품부터 업데이트 진행
 
 async function updateProductKR() {
   const token = await util.sqlData(`SELECT access_token FROM cmipdb.i_cafe24auth`);
@@ -37,7 +39,7 @@ async function updateProductKR() {
     "product_no,product_code,custom_product_code,product_name,supply_product_name,price,display,selling,tax_type,list_image,manufacturer_code,trend_code,brand_code,supplier_code,created_date,updated_date";
   console.log("kr product data update start");
 
-  for (let i = 0; 100 * i < latestProductNo; i++) {
+  for (let i = STARTNUMBER; 100 * i < latestProductNo; i++) {
     const productOptions = {
       method: "GET",
       url: `https://moomooz.cafe24api.com/api/v2/admin/products?since_product_no=${
@@ -125,7 +127,7 @@ async function updateProductJP() {
     "product_no,product_code,custom_product_code,product_name,supply_product_name,eng_product_name,internal_product_name,price,display,selling,tax_type,list_image,manufacturer_code,trend_code,brand_code,supplier_code,hscode,clearance_category_kor,clearance_category_code,english_product_material,cloth_fabric,created_date,updated_date";
   console.log("jp product data update start");
 
-  for (let i = 0; 100 * i < latestProductNo; i++) {
+  for (let i = STARTNUMBER; 100 * i < latestProductNo; i++) {
     const productOptions = {
       method: "GET",
       url: `https://moomooz.cafe24api.com/api/v2/admin/products?shop_no=2&since_product_no=${
